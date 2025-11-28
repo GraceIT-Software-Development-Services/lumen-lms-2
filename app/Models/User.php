@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\UserTypeEnum;
 use App\Traits\AdditionalUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -34,7 +35,7 @@ class User extends Authenticatable
         'is_course_admin',
         'is_trainee',
         'is_director',
-        'is_employer_company_user',
+        'user_type',
     ];
 
     /**
@@ -67,7 +68,7 @@ class User extends Authenticatable
             'is_course_admin' => 'boolean',
             'is_trainee' => 'boolean',
             'is_director' => 'boolean',
-            'is_employer_company_user' => 'boolean',
+            'user_type' => UserTypeEnum::class,
             'employer_name' => 'encrypted',
         ];
     }
