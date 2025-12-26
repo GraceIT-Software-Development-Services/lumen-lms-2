@@ -57,11 +57,15 @@
                     <div class="relative">
                         <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 transition-all duration-200 hover:ring-4 hover:ring-gray-200" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                             <span class="sr-only">Open user menu</span>
+                            @auth
                             <div class="relative">
-                                <img class="w-10 h-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="user photo">
+                                <div class="w-10 h-10 rounded-full bg-indigo-400 flex items-center justify-center text-white font-semibold text-lg">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
                                 <!-- Online Status Indicator -->
                                 <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white dark:ring-gray-800"></span>
                             </div>
+                            @endauth
                         </button>
 
                         <!-- Enhanced Dropdown Menu -->
@@ -69,20 +73,22 @@
                             <!-- User Info Header -->
                             <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-t-lg" role="none">
                                 <div class="flex items-center space-x-3">
-                                    <img class="w-10 h-10 rounded-full" src="{{ Auth::user()->profile_photo_url }}" alt="user photo">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-lg">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-gray-900 dark:text-white truncate" role="none">
-                                            {{ auth()->user()->name }}
+                                            {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                            {{ auth()->user()->email }}
+                                            Email: {{ Auth::user()->email }}
                                         </p>
                                     </div>
                                 </div>
                                 <div class="mt-2">
                                     <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
                                         <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
-                                        {{ auth()->user()->name }}
+                                        User Role here
                                     </span>
                                 </div>
                             </div>
@@ -165,7 +171,7 @@
                     </li>
 
                     <li>
-                        <a href="#"
+                        <a href="{{ route('centers.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
                             <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
