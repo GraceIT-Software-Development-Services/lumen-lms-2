@@ -2,7 +2,7 @@
     <div class="relative overflow-x-auto shadow-xs sm:rounded-lg mt-3">
         <div class="flex flex-col sm:flex-row flex-wrap items-center justify-between pb-4 space-y-4 sm:space-y-0">
             <div>
-                <button wire:click=""
+                <a href="{{ route('centers.create') }}"
                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -13,7 +13,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     Create New Center
-                </button>
+                </a>
             </div>
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative">

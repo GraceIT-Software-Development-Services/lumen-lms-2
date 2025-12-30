@@ -4,6 +4,7 @@ namespace Modules\Institution\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Institution\Http\Requests\CreateCenterRequest;
 
 class CenterController extends Controller
 {
@@ -20,13 +21,13 @@ class CenterController extends Controller
      */
     public function create()
     {
-        return view('institution::create');
+        return view('institution.center.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(CreateCenterRequest $request) {}
 
     /**
      * Show the specified resource.
