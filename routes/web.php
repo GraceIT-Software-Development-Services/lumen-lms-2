@@ -8,6 +8,7 @@ use Livewire\Volt\Volt;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchController;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchStudentController;
 use Modules\CourseAdministration\Http\Controllers\TrainingCourseController;
+use Modules\CourseAdministration\Http\Controllers\TrainingScheduleItemController;
 use Modules\Institution\Http\Controllers\CenterController;
 
 Route::get('/', function () {
@@ -63,6 +64,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/training-student-batches/{uuid}/edit', [TrainingBatchStudentController::class, 'edit'])->name('training_student_batches.edit');
     Route::put('/training-student-batches/{uuid}/update', [TrainingBatchStudentController::class, 'update'])->name('training_student_batches.update');
     Route::delete('/training-student-batches/{uuid}/delete', [TrainingBatchController::class, 'destroy'])->name('training_student_batches.destroy');
+
+    // --- Training Schedule Items ----
+    Route::get('/training-schedule-items', [TrainingScheduleItemController::class, 'index'])->name('training_schedule_items.index');
+    Route::get('/training-schedule-items/create', [TrainingScheduleItemController::class, 'create'])->name('training_schedule_items.create');
+    Route::post('/training-schedule-items/store', [TrainingScheduleItemController::class, 'store'])->name('training_schedule_items.store');
+    Route::get('/training-schedule-items/{id}', [TrainingScheduleItemController::class, 'show'])->name('training_schedule_items.show');
+    Route::get('/training-schedule-items/{id}/edit', [TrainingScheduleItemController::class, 'edit'])->name('training_schedule_items.edit');
+    Route::put('/training-schedule-items/{id}/update', [TrainingScheduleItemController::class, 'update'])->name('training_schedule_items.update');
+    Route::delete('/training-schedule-items/{id}/delete', [\Modules\CourseAdministration\Http\Controllers\TrainingScheduleItemController::class, 'destroy'])->name('training_schedule_items.destroy');
 
 
     // Perfomance Administration Module Routes
