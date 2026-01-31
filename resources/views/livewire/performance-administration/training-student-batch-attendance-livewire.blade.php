@@ -11,7 +11,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
                 </div>
-                <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Search details here" wire:model.live="search">
+                <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Search course" wire:model.live="search">
             </div>
         </div>
 
@@ -24,19 +24,19 @@
                                 #
                             </th>
                             <th scope="col" class="px-4 py-3">
-                                Batch Details
+                                Training Batch Details
                             </th>
                             <th scope="col" class="px-4 py-3">
                                 Schedule Details
                             </th>
                             <th scope="col" class="px-4 py-3">
-                                Schedule Days
+                                Session Title
                             </th>
                             <th scope="col" class="px-4 py-3">
-                                Start Time
+                                Description
                             </th>
                             <th scope="col" class="px-4 py-3">
-                                End Time
+                                Session Type
                             </th>
                             <th scope="col" class="px-4 py-3">
                             </th>
@@ -44,34 +44,94 @@
                     </thead>
                     <tbody>
                         @forelse ($studentBatchAttendances as $studentBatchAttendance)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-400">
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-150">
+                            <!-- Iteration Number -->
                             <td scope="row" class="px-4 py-3 font-extrabold text-gray-600 whitespace-nowrap dark:text-white">
                                 {{ $loop->iteration }}
                             </td>
-                            <td scope="row" class="px-4 py-3 font-extrabold text-gray-600 whitespace-nowrap dark:text-white">
-                                {{ $studentBatchAttendance->batch_name }}
-                                {{ $studentBatchAttendance->batch_code }}
+
+                            <!-- Batch Information -->
+                            <td class="px-4 py-4">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-gray-900 dark:text-white">{{ $studentBatchAttendance->batch_name }}</span>
+                                        <span class="px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                            {{ $studentBatchAttendance->batch_code }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            {{ \Carbon\Carbon::parse($studentBatchAttendance->start_date)->format('M d, Y') }}
+                                        </span>
+                                        <span class="text-gray-400">→</span>
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            {{ \Carbon\Carbon::parse($studentBatchAttendance->end_date)->format('M d, Y') }}
+                                        </span>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">
-                                {{ $studentBatchAttendance->schedule_name }}
+
+                            <!-- Schedule Item Details -->
+                            <td class="px-4 py-4">
+                                <div class="space-y-2">
+                                    <div class="font-semibold text-gray-900 dark:text-white">
+                                        {{ $studentBatchAttendance->training_schedule_item_name }}
+                                    </div>
+                                    @if($studentBatchAttendance->training_schedule_item_description)
+                                    <div class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                        {{ Str::limit($studentBatchAttendance->training_schedule_item_description, 100) }}
+                                    </div>
+                                    @endif
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            {{ \Carbon\Carbon::parse($studentBatchAttendance->training_schedule_item_start_time)->format('g:i A') }}
+                                        </span>
+                                        <span class="text-gray-400">-</span>
+                                        <span class="text-gray-600 dark:text-gray-400">
+                                            {{ \Carbon\Carbon::parse($studentBatchAttendance->training_schedule_item_end_time)->format('g:i A') }}
+                                        </span>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">
-                                {{ implode(', ', $studentBatchAttendance->schedule_days ?? []) }}
+
+                            <!-- Session Title -->
+                            <td class="px-4 py-4">
+                                <div class="font-medium text-gray-900 dark:text-white">
+                                    {{ $studentBatchAttendance->session_title }}
+                                </div>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">
-                                {{ date('H:i A', strtotime($studentBatchAttendance->schedule_start_time)) }}
+
+                            <!-- Description -->
+                            <td class="px-4 py-4">
+                                <div class="text-sm text-gray-600 dark:text-gray-400 max-w-xs">
+                                    {{ Str::limit($studentBatchAttendance->description, 100) }}
+                                </div>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">
-                                {{ date('H:i A', strtotime($studentBatchAttendance->schedule_end_time)) }}
+
+                            <!-- Session Type -->
+                            <td class="px-4 py-4">
+                                <div class="font-medium text-gray-900 dark:text-white">
+                                    {{ ucfirst($studentBatchAttendance->session_type) }}
+                                </div>
                             </td>
+
                             <td class="px-4 py-3 text-gray-600 text-right whitespace-nowrap dark:text-white space-x-2">
-                                <a href="{{ route('training_schedule_items.show', $studentBatchAttendance->uuid) }}"
-                                    class="inline-flex items-center text-green-600 hover:underline font-bold">
+                                <a href="#"
+                                    class=" inline-flex items-center text-green-600 hover:underline font-bold">
                                     <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    View
+                                    Add Attendance
                                 </a>
                             </td>
                         </tr>
@@ -83,7 +143,7 @@
                                         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                         </svg>
-                                        <h3 class="mt-2 text-sm font-medium text-gray-500 dark:text-white">No training student batch attendance found</h3>
+                                        <h3 class="mt-2 text-sm font-medium text-gray-500 dark:text-white">No training batch schedule item found</h3>
                                     </div>
                                 </div>
                             </td>
@@ -97,5 +157,6 @@
         <div class="py-3">
             {{ $studentBatchAttendances->links() }}
         </div>
+
     </div>
 </div>

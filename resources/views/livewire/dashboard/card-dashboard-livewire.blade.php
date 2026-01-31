@@ -19,7 +19,7 @@
                 <!-- Content -->
                 <div wire:loading.remove wire:target="render">
                     <!-- Header -->
-                    <div class="flex flex-col mb-3">
+                    <div class="flex flex-col mb-7">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-300 dark:from-blue-900 dark:to-blue-700 rounded-xl flex items-center justify-center shadow-inner">
                                 <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -34,7 +34,7 @@
                     </div>
 
                     <!-- Value -->
-                    <p class="text-4xl font-extrabold text-gray-700 dark:text-white mb-1 leading-none">
+                    <p class="text-4xl font-bold text-gray-700 dark:text-white mb-1 leading-none">
                         {{ 0 }}
                     </p>
                 </div>
@@ -58,7 +58,7 @@
                 <!-- Content -->
                 <div wire:loading.remove wire:target="render">
                     <!-- Header -->
-                    <div class="flex flex-col mb-3">
+                    <div class="flex flex-col mb-7">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gradient-to-br from-green-100 to-green-300 dark:from-green-900 dark:to-green-700 rounded-xl flex items-center justify-center shadow-inner">
                                 <svg class="w-5 h-5 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -72,9 +72,8 @@
                         </div>
                     </div>
 
-
                     <!-- Value -->
-                    <p class="text-4xl font-extrabold text-gray-700 dark:text-white mb-1 leading-none">
+                    <p class="text-4xl font-bold text-gray-700 dark:text-white mb-1 leading-none">
                         {{ 0 }}
                     </p>
                 </div>
@@ -98,7 +97,7 @@
                 <!-- Content -->
                 <div wire:loading.remove wire:target="render">
                     <!-- Header -->
-                    <div class="flex flex-col mb-3">
+                    <div class="flex flex-col mb-7">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-300 dark:from-purple-900 dark:to-purple-700 rounded-xl flex items-center justify-center shadow-inner">
                                 <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -106,7 +105,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h6 class="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">Trainigs</h6>
+                                <h6 class="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">Trainings</h6>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 -mt-0.5">Total number of ongoing trainings</p>
                             </div>
                         </div>
@@ -114,48 +113,7 @@
 
 
                     <!-- Value -->
-                    <p class="text-4xl font-extrabold text-gray-700 dark:text-white mb-1 leading-none">
-                        {{ 0 }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PWD -->
-        <div class="w-full">
-            <div class="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 hover:scale-[1.02] relative min-h-32">
-
-                <!-- Loading Skeleton -->
-                <div wire:loading wire:target="render" class="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center z-10">
-                    <div class="flex flex-col items-center gap-3 w-full p-5">
-                        <div class="w-10 h-10 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse"></div>
-                        <div class="w-24 h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded animate-pulse"></div>
-                        <div class="w-16 h-8 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded animate-pulse"></div>
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div wire:loading.remove wire:target="render">
-                    <!-- Header -->
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-red-100 to-red-300 dark:from-red-900 dark:to-red-700 rounded-xl flex items-center justify-center shadow-inner">
-                            <svg class="w-5 h-5 text-red-600 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2a2 2 0 11.001 3.999A2 2 0 0112 2zm2 5h-4a1 1 0 00-1 1v5.09A6.001 6.001 0 1018 20a1 1 0 00-2 0 4 4 0 11-6.874-2.783A1 1 0 0010 16v-4h1.586l2.707 2.707a1 1 0 001.414-1.414L13.414 11H15a1 1 0 000-2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h6 class="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">
-                                PWD
-                            </h6>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 -mt-0.5">
-                                Registered persons with disability in the system
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <!-- Value -->
-                    <p class="text-4xl font-extrabold text-gray-900 dark:text-white mb-1 leading-none">
+                    <p class="text-4xl font-bold text-gray-700 dark:text-white mb-1 leading-none">
                         {{ 0 }}
                     </p>
                 </div>

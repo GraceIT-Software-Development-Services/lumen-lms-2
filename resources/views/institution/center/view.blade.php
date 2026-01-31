@@ -1,5 +1,4 @@
 <x-layouts.app.flowbite>
-
      <div class="max-w-full mx-auto">
           <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                {{-- Header --}}
@@ -22,6 +21,7 @@
                @endif
 
                <form id="update-center-form" action="{{ route('centers.update', $center->uuid) }}" method="POST" enctype="multipart/form-data">
+
                     @csrf
                     @method('PUT')
 

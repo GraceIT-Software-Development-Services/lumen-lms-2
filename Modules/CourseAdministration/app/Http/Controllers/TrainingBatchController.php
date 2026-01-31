@@ -29,7 +29,7 @@ class TrainingBatchController extends Controller
         // Fetch related training courses for display
         $trainingCourses = TrainingCourse::all();
         // Fetch trainers for selection
-        $trainers = User::where('user_type', 'institution')->orderBy('name', 'asc')->get();
+        $trainers = User::orderBy('name', 'asc')->get();
         return view('courseadministration.training_batches.create', compact('trainingCourses', 'trainers'));
     }
 
@@ -59,7 +59,7 @@ class TrainingBatchController extends Controller
         // Fetch related training courses for display
         $trainingCourses = TrainingCourse::all();
         // Fetch trainers for selection
-        $trainers = User::where('user_type', 'institution')->orderBy('name', 'asc')->get();
+        $trainers = User::orderBy('name', 'asc')->get();
         // Return the view with the training batch data
         return view('courseadministration.training_batches.view', compact('trainingBatch', 'trainingCourses', 'trainers'));
     }

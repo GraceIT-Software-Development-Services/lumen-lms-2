@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\UserTypeEnum;
 use App\Traits\AdditionalUuid;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
@@ -31,12 +32,7 @@ class User extends Authenticatable
         'extension',
         'email',
         'password',
-        'employer_name',
-        'is_trainer',
-        'is_course_admin',
-        'is_trainee',
-        'is_director',
-        'user_type',
+        'learner_id',
     ];
 
     /**
@@ -65,12 +61,6 @@ class User extends Authenticatable
             'extension' => 'encrypted',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_trainer' => 'boolean',
-            'is_course_admin' => 'boolean',
-            'is_trainee' => 'boolean',
-            'is_director' => 'boolean',
-            'user_type' => UserTypeEnum::class,
-            'employer_name' => 'encrypted',
         ];
     }
 

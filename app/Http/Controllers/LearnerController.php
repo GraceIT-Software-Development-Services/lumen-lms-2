@@ -12,7 +12,8 @@ class LearnerController extends Controller
      */
     public function index()
     {
-        //
+        $learner = Learner::where('id', auth()->user()->learner_id)->first();
+        return view('learner.index', compact('learner'));
     }
 
     /**
