@@ -201,6 +201,14 @@ class CalendarActiviyLivewire extends Component
 
     public function render()
     {
+        // Change status when date is past
+        $today = Carbon::today();
+        foreach (TrainingActivity::whereDate('activity_date', '<', $today)->get() as $activity) {
+            if ($activity->status == 'pending') {
+                $activity->update(['status' => 'completed']);
+            }
+        }
+
         return view('livewire.activity.calendar-activiy-livewire', [
             'monthName'          => $this->monthName(),
             'daysInMonth'        => $this->daysInMonth(),

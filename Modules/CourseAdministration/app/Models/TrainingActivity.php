@@ -20,6 +20,7 @@ class TrainingActivity extends Model
         'title',
         'activity_date',
         'activity_time',
+        'status',
     ];
 
     // protected static function newFactory(): TrainingActivityFactory
