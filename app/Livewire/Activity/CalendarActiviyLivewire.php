@@ -35,7 +35,11 @@ class CalendarActiviyLivewire extends Component
         $this->currentYear  = now()->year;
 
         // Load training batches for dropdown
-        $this->trainingBatches = TrainingBatch::orderBy('batch_name')->get();
+        $this->trainingBatches = TrainingBatch::query()
+            ->where('trainer_id', auth()->user()->id)
+            ->whereIn('status', ['open', 'ongoing', 'full'])
+            ->orderBy('batch_name')
+            ->get();
     }
 
     // ─── Computed Properties ───────────────────────────────────────────────────

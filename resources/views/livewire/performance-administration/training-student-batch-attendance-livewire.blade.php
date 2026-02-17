@@ -51,14 +51,12 @@
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Training Batch Details</th>
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Schedule Details</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Session Title</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Session Type</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider"># of Student</th>
                         <th class="px-5 py-3"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($studentBatchAttendances as $studentBatchAttendance)
+                    @forelse ($trainingBatches as $trainingBatch)
                     <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
                         <!-- Iteration Number -->
                         <td class="px-5 py-3.5 text-gray-400 font-medium">
@@ -69,24 +67,12 @@
                         <td class="px-5 py-3.5">
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-bold text-gray-900">{{ $studentBatchAttendance->batch_name }}</span>
+                                    <span class="font-bold text-gray-900">{{ $trainingBatch->batch_name }}</span>
                                     <span class="px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
-                                        {{ $studentBatchAttendance->batch_code }}
+                                        {{ $trainingBatch->batch_code }}
                                     </span>
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-gray-600">
-                                    <span class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        {{ \Carbon\Carbon::parse($studentBatchAttendance->start_date)->format('M d, Y') }}
-                                    </span>
-                                    <span class="text-gray-400">→</span>
-                                    <span class="flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        {{ \Carbon\Carbon::parse($studentBatchAttendance->end_date)->format('M d, Y') }}
+                                    <span class="px-2 py-0.5 text-md font-medium text-gray-700">
+                                        ({{ \Carbon\Carbon::parse($trainingBatch->start_date)->format('M d, Y') }} - {{ \Carbon\Carbon::parse($trainingBatch->end_date)->format('M d, Y') }})
                                     </span>
                                 </div>
                             </div>
@@ -96,11 +82,11 @@
                         <td class="px-5 py-3.5">
                             <div class="space-y-2">
                                 <div class="font-semibold text-gray-900">
-                                    {{ $studentBatchAttendance->training_schedule_item_name }}
+                                    {{ $trainingBatch->training_schedule_item_name }}
                                 </div>
-                                @if($studentBatchAttendance->training_schedule_item_description)
+                                @if($trainingBatch->training_schedule_item_description)
                                 <div class="text-sm text-gray-600 line-clamp-2">
-                                    {{ Str::limit($studentBatchAttendance->training_schedule_item_description, 100) }}
+                                    {{ Str::limit($trainingBatch->training_schedule_item_description, 100) }}
                                 </div>
                                 @endif
                                 <div class="flex items-center gap-2 text-sm">
@@ -108,11 +94,11 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        {{ \Carbon\Carbon::parse($studentBatchAttendance->training_schedule_item_start_time)->format('g:i A') }}
+                                        {{ \Carbon\Carbon::parse($trainingBatch->training_schedule_item_start_time)->format('g:i A') }}
                                     </span>
                                     <span class="text-gray-400">-</span>
                                     <span class="text-gray-600">
-                                        {{ \Carbon\Carbon::parse($studentBatchAttendance->training_schedule_item_end_time)->format('g:i A') }}
+                                        {{ \Carbon\Carbon::parse($trainingBatch->training_schedule_item_end_time)->format('g:i A') }}
                                     </span>
                                 </div>
                             </div>
@@ -121,30 +107,32 @@
                         <!-- Session Title -->
                         <td class="px-5 py-3.5">
                             <div class="font-medium text-gray-900">
-                                {{ $studentBatchAttendance->session_title }}
-                            </div>
-                        </td>
-
-                        <!-- Description -->
-                        <td class="px-5 py-3.5">
-                            <div class="text-sm text-gray-600 max-w-xs">
-                                {{ Str::limit($studentBatchAttendance->description, 100) }}
-                            </div>
-                        </td>
-
-                        <!-- Session Type -->
-                        <td class="px-5 py-3.5">
-                            <div class="font-medium text-gray-900">
-                                {{ ucfirst($studentBatchAttendance->session_type) }}
+                                {{ $trainingBatch->registered_students_count }}
                             </div>
                         </td>
 
                         <td class="px-5 py-3.5 text-right">
-                            <a href="#"
-                                class="text-indigo-500 hover:text-indigo-700 font-medium text-sm transition">
-                                Add Attendance →
-                            </a>
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="{{ route('training_student_batch_attendances.create', ['trainingBatchUuid' => $trainingBatch->uuid]) }}"
+                                    class="inline-flex items-center gap-1.5 text-indigo-500 hover:text-indigo-700 font-medium text-sm transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add Attendance
+                                </a>
+
+                                <span class="text-gray-300">|</span>
+
+                                <a href="{{ route('training_student_batch_attendances.report', ['trainingBatchUuid' => $trainingBatch->uuid]) }}"
+                                    class="inline-flex items-center gap-1.5 text-emerald-500 hover:text-emerald-700 font-medium text-sm transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Attendance Report
+                                </a>
+                            </div>
                         </td>
+
                     </tr>
                     @empty
                     <tr>
@@ -162,9 +150,9 @@
     </div>
 
     <!-- Pagination -->
-    @if ($studentBatchAttendances->hasPages())
+    @if ($trainingBatches->hasPages())
     <div class="mt-4">
-        {{ $studentBatchAttendances->links() }}
+        {{ $trainingBatches->links() }}
     </div>
     @endif
 </div>

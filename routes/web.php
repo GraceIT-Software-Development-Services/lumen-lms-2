@@ -106,6 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Perfomance Administration Module Routes
     Route::get('training_student_batch_attendances', [StudentBatchAttendanceController::class, 'index'])->name('training_student_batch_attendances.index');
+    Route::get('training_student_batch_attendances/create/{trainingBatchUuid}', [StudentBatchAttendanceController::class, 'createStudentAttendance'])->name('training_student_batch_attendances.create');
+    Route::get('training_student_batch_attendances/report/{trainingBatchUuid}', [StudentBatchAttendanceController::class, 'studentAttendanceReport'])->name('training_student_batch_attendances.report');
 
 
     // User Routes

@@ -2,7 +2,9 @@
 
 namespace App\Livewire\PerformanceAdministration;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Modules\CourseAdministration\Models\TrainingBatch;
 use Modules\CourseAdministration\Models\TrainingBatchScheduleItem;
 use Modules\PerformanceAdministration\Models\StudentBatchAttendance;
 
@@ -13,39 +15,51 @@ class TrainingStudentBatchAttendanceLivewire extends Component
 
     public function render()
     {
-        $schedule = TrainingBatchScheduleItem::query()
+        // Fetch training batches with the count of registered students, filtered by the authenticated trainer and search term
+        $trainingBatches = TrainingBatch::query()
             ->select(
-                // Fields
+                'training_batches.id',
+                'training_batches.uuid',
                 'training_batches.batch_name',
                 'training_batches.batch_code',
+                'training_courses.course_name',
+                'training_courses.course_code',
                 'training_batches.start_date',
                 'training_batches.end_date',
-                // Schedule Item Fields
-                'training_schedule_items.name as training_schedule_item_name',
-                'training_schedule_items.description as training_schedule_item_description',
+                'training_batches.status',
                 'training_schedule_items.start_time as training_schedule_item_start_time',
                 'training_schedule_items.end_time as training_schedule_item_end_time',
-                // Batch Schedule Item Fields
-                'training_batch_schedule_items.session_title',
-                'training_batch_schedule_items.description',
-                'training_batch_schedule_items.session_type',
-                'training_batch_schedule_items.uuid',
-                'training_batch_schedule_items.notes',
+                'training_batches.max_participants',
+                DB::raw('COUNT(training_batch_students.id) as registered_students_count')
             )
-            // Joins
-            ->join('training_batches', 'training_batch_schedule_items.training_batch_id', '=', 'training_batches.id')
-            ->join('training_schedule_items', 'training_batch_schedule_items.training_schedule_item_id', '=', 'training_schedule_items.id')
+            ->join('training_courses', 'training_batches.training_course_id', '=', 'training_courses.id')
+            ->join('training_schedule_items', 'training_batches.training_schedule_item_id', '=', 'training_schedule_items.id')
+            ->leftJoin('training_batch_students', 'training_batches.id', '=', 'training_batch_students.training_batch_id')
 
-            // Filter by Trainer (Logged-in User)
-            ->where('training_batches.trainer_id', auth()->id())
-            // Search Filter
-            ->where('training_batch_schedule_items.session_title', 'like', '%' . $this->search . '%')
-            ->orWhere('training_batch_schedule_items.description', 'like', '%' . $this->search . '%')
+            ->where('training_batches.trainer_id', auth()->user()->id)
 
+            ->where(function ($query) {
+                $query->where('training_batches.batch_code', 'like', '%' . $this->search . '%')
+                    ->orWhere('training_courses.course_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('training_courses.course_code', 'like', '%' . $this->search . '%');
+            })
+            ->groupBy(
+                'training_batches.id',
+                'training_batches.uuid',
+                'training_batches.batch_name',
+                'training_batches.batch_code',
+                'training_courses.course_name',
+                'training_courses.course_code',
+                'training_batches.start_date',
+                'training_batches.end_date',
+                'training_batches.status',
+                'training_batches.max_participants'
+            )
+            ->orderBy('training_batches.created_at', 'desc')
             ->paginate($this->perPage);
 
         return view('livewire.performance-administration.training-student-batch-attendance-livewire', [
-            'studentBatchAttendances' => $schedule,
+            'trainingBatches' => $trainingBatches,
         ]);
     }
 }
