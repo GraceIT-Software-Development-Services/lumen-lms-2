@@ -55,7 +55,11 @@
                                         <option value="">None (Create custom session)</option>
                                         @foreach($trainingScheduleItems as $item)
                                         <option value="{{ $item->id }}" {{ old('training_schedule_item_id') == $item->id ? 'selected' : '' }}>
-                                             {{ $item->name }} ({{ date('g:i A', strtotime($item->start_time)) }} - {{ date('g:i A', strtotime($item->end_time)) }})
+                                             {{ $item->name }}
+                                             @if(!empty($item->schedule_days) && is_array($item->schedule_days))
+                                             ({{ implode(', ', $item->schedule_days) }})
+                                             @endif
+                                             - {{ date('g:i A', strtotime($item->start_time)) }} to {{ date('g:i A', strtotime($item->end_time)) }}
                                         </option>
                                         @endforeach
                                    </select>
@@ -66,7 +70,7 @@
                               </div>
 
                               {{-- Session Title --}}
-                              <div class="md:col-span-2">
+                              <!-- <div class="md:col-span-2">
                                    <label for="session_title" class="block mb-2 text-sm font-medium text-gray-900">
                                         Session Title <span class="text-red-600">*</span>
                                    </label>
@@ -80,10 +84,10 @@
                                    @error('session_title')
                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
-                              </div>
+                              </div> -->
 
                               {{-- Description --}}
-                              <div class="md:col-span-2">
+                              <!-- <div class="md:col-span-2">
                                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900">
                                         Description <span class="text-gray-500 text-xs">(Optional)</span>
                                    </label>
@@ -96,12 +100,12 @@
                                    @error('description')
                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
-                              </div>
+                              </div> -->
                          </div>
                     </div>
 
                     {{-- Session Type --}}
-                    <div class="p-4 md:p-5 space-y-4">
+                    <!-- <div class="p-4 md:p-5 space-y-4">
                          <h2 class="text-lg font-semibold text-gray-900 mb-4">Session Type</h2>
 
                          <div>
@@ -124,7 +128,7 @@
                               <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                               @enderror
                          </div>
-                    </div>
+                    </div> -->
 
                     {{-- Notes --}}
                     <div class="p-4 md:p-5 space-y-4">

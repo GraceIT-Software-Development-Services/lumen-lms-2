@@ -2,12 +2,14 @@
 
 namespace Modules\PerformanceAdministration\Models;
 
+use App\Traits\AdditionalUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Modules\PerformanceAdministration\Database\Factories\StudentBatchAttendanceFactory;
 
 class StudentBatchAttendance extends Model
 {
+    use AdditionalUuid;
     use HasFactory;
 
     /**

@@ -1,25 +1,22 @@
 <x-layouts.app.flowbite>
 
      <div class="max-w-full mx-auto">
-          <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
-               <div class="mb-6 flex justify-between items-start">
+          <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+               {{-- Header --}}
+               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 bg-blue-50 dark:bg-gray-600">
                     <div>
-                         <h1 class="text-2xl font-bold text-gray-900">Training Batch Update</h1>
-                         <p class="text-gray-600 mt-1">Update the details of the training batch</p>
-                    </div>
-                    <div class="flex gap-2">
-                         <button type="submit" form="update-batch-form" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                              Update
-                         </button>
-                         <button type="button" onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                              Delete
-                         </button>
+                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                              Training Batch Update
+                         </h3>
+                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                              Update the details of the training batch
+                         </p>
                     </div>
                </div>
 
                {{-- Success Message --}}
                @if(session('success'))
-               <div class="mb-4 p-4 text-green-800 bg-green-50 rounded-lg" role="alert">
+               <div class="m-4 md:m-5 p-4 text-green-800 bg-green-50 rounded-lg" role="alert">
                     {{ session('success') }}
                </div>
                @endif
@@ -30,7 +27,7 @@
                     @method('PUT')
 
                     {{-- Basic Information --}}
-                    <div class="mb-6">
+                    <div class="p-4 md:p-5 space-y-4">
                          <h2 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {{-- Training Course --}}
@@ -162,7 +159,7 @@
                     </div>
 
                     {{-- Trainer Information --}}
-                    <div class="mb-6">
+                    <div class="p-4 md:p-5 space-y-4">
                          <h2 class="text-lg font-semibold text-gray-900 mb-4">Trainer Information</h2>
                          <div>
                               <label for="trainer_id" class="block mb-2 text-sm font-medium text-gray-900">
@@ -175,7 +172,7 @@
                                    <option value="">Select trainer (optional)</option>
                                    @foreach($trainers as $trainer)
                                    <option value="{{ $trainer->id }}" {{ old('trainer_id', $trainingBatch->trainer_id) == $trainer->id ? 'selected' : '' }}>
-                                        {{ $trainer->name }}
+                                        {{ $trainer->name }} {{ $trainer->last_name }}
                                    </option>
                                    @endforeach
                               </select>
@@ -186,7 +183,7 @@
                     </div>
 
                     {{-- Additional Information --}}
-                    <div class="mb-6">
+                    <div class="p-4 md:p-5 space-y-4">
                          <h2 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h2>
                          <div>
                               <label for="notes" class="block mb-2 text-sm font-medium text-gray-900">
@@ -205,13 +202,25 @@
                     </div>
 
                     {{-- Form Actions --}}
-                    <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-                         <a
-                              href="{{ route('training_batches.index') }}"
-                              class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                         <button
+                              type="submit"
+                              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                              Update Batch
+                         </button>
+                         <button
+                              type="button"
+                              onclick="confirmDelete()"
+                              class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-3 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800">
+                              Delete Batch
+                         </button>
+
+                         <a href="{{ route('training_batches.index') }}"
+                              class="py-2.5 px-5 ml-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                               Cancel
                          </a>
                     </div>
+
                </form>
 
                {{-- Hidden Delete Form --}}

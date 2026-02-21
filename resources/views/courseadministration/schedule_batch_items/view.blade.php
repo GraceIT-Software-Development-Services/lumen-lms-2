@@ -1,0 +1,199 @@
+<x-layouts.app.flowbite>
+     <div class="max-w-full mx-auto">
+          <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+               {{-- Header --}}
+               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 bg-blue-50 dark:bg-gray-600">
+                    <div>
+                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                              Training Session Update
+                         </h3>
+                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                              Update the details of the training session
+                         </p>
+                    </div>
+               </div>
+
+               {{-- Success Message --}}
+               @if(session('success'))
+               <div class="m-4 md:m-5 p-4 text-green-800 bg-green-50 rounded-lg" role="alert">
+                    {{ session('success') }}
+               </div>
+               @endif
+
+               <form id="update-session-form" action="{{ route('training_batch_schedule_items.update', $trainingBatchScheduleItem->uuid) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    {{-- Basic Information --}}
+                    <div class="p-4 md:p-5 space-y-4">
+                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {{-- Training Batch --}}
+                              <div class="md:col-span-2">
+                                   <label for="training_batch_id" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Training Batch <span class="text-red-600">*</span>
+                                   </label>
+                                   <select
+                                        id="training_batch_id"
+                                        name="training_batch_id"
+                                        class="bg-gray-50 border @error('training_batch_id') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option value="">Select a training batch</option>
+                                        @foreach($trainingBatches as $batch)
+                                        <option value="{{ $batch->id }}" {{ old('training_batch_id', $trainingBatchScheduleItem->training_batch_id) == $batch->id ? 'selected' : '' }}>
+                                             {{ $batch->batch_name }} - ({{ $batch->batch_code }}) - {{ date('F d, Y', strtotime($batch->start_date)) }} to {{ date('F d, Y', strtotime($batch->end_date)) }}
+                                        </option>
+                                        @endforeach
+                                   </select>
+                                   <p class="mt-1 text-xs text-gray-500">Link this session to a training batch</p>
+                                   @error('training_batch_id')
+                                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                   @enderror
+                              </div>
+
+                              {{-- Training Schedule Item (Optional) --}}
+                              <div class="md:col-span-2">
+                                   <label for="training_schedule_item_id" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Training Schedule Item
+                                   </label>
+                                   <select
+                                        id="training_schedule_item_id"
+                                        name="training_schedule_item_id"
+                                        class="bg-gray-50 border @error('training_schedule_item_id') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        <option value="">None (Custom session)</option>
+                                        @foreach($trainingScheduleItems as $item)
+                                        <option value="{{ $item->id }}" {{ old('training_schedule_item_id', $trainingBatchScheduleItem->training_schedule_item_id) == $item->id ? 'selected' : '' }}>
+                                             {{ $item->name }}
+                                             @if(!empty($item->schedule_days) && is_array($item->schedule_days))
+                                             ({{ implode(', ', $item->schedule_days) }})
+                                             @endif
+                                             - ({{ date('g:i A', strtotime($item->start_time)) }} - {{ date('g:i A', strtotime($item->end_time)) }})
+                                        </option>
+                                        @endforeach
+                                   </select>
+                                   <p class="mt-1 text-xs text-gray-500">Link this session to a predefined schedule</p>
+                                   @error('training_schedule_item_id')
+                                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                   @enderror
+                              </div>
+
+                              {{-- Session Title --}}
+                              <!-- <div class="md:col-span-2">
+                                   <label for="session_title" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Session Title <span class="text-red-600">*</span>
+                                   </label>
+                                   <input
+                                        type="text"
+                                        id="session_title"
+                                        name="session_title"
+                                        value="{{ old('session_title', $trainingBatchScheduleItem->session_title) }}"
+                                        class="bg-gray-50 border @error('session_title') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="e.g. Introduction to Laravel Framework">
+                                   @error('session_title')
+                                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                   @enderror
+                              </div> -->
+
+                              {{-- Description --}}
+                              <!-- <div class="md:col-span-2">
+                                   <label for="description" class="block mb-2 text-sm font-medium text-gray-900">
+                                        Description <span class="text-gray-500 text-xs">(Optional)</span>
+                                   </label>
+                                   <textarea
+                                        id="description"
+                                        name="description"
+                                        rows="3"
+                                        class="bg-gray-50 border @error('description') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="Brief description of what will be covered in this session">{{ old('description', $trainingBatchScheduleItem->description) }}</textarea>
+                                   @error('description')
+                                   <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                   @enderror
+                              </div> -->
+                         </div>
+                    </div>
+
+                    {{-- Session Type --}}
+                    <!-- <div class="p-4 md:p-5 space-y-4">
+                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Session Type</h2>
+
+                         <div>
+                              <label for="session_type" class="block mb-2 text-sm font-medium text-gray-900">
+                                   Select Session Type <span class="text-red-600">*</span>
+                              </label>
+                              <select
+                                   id="session_type"
+                                   name="session_type"
+                                   class="bg-gray-50 border @error('session_type') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                   <option value="">Choose a session type</option>
+                                   <option value="lecture" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'lecture' ? 'selected' : '' }}>📚 Lecture</option>
+                                   <option value="workshop" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'workshop' ? 'selected' : '' }}>🔧 Workshop</option>
+                                   <option value="practical" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'practical' ? 'selected' : '' }}>💻 Practical</option>
+                                   <option value="assessment" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'assessment' ? 'selected' : '' }}>📝 Assessment</option>
+                                   <option value="group_activity" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'group_activity' ? 'selected' : '' }}>👥 Group Activity</option>
+                                   <option value="presentation" {{ old('session_type', $trainingBatchScheduleItem->session_type) == 'presentation' ? 'selected' : '' }}>🎤 Presentation</option>
+                              </select>
+                              @error('session_type')
+                              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                              @enderror
+                         </div>
+                    </div> -->
+
+                    {{-- Notes --}}
+                    <div class="p-4 md:p-5 space-y-4">
+                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Additional Notes</h2>
+
+                         <div>
+                              <label for="notes" class="block mb-2 text-sm font-medium text-gray-900">
+                                   Notes <span class="text-gray-500 text-xs">(Optional)</span>
+                              </label>
+                              <textarea
+                                   id="notes"
+                                   name="notes"
+                                   rows="4"
+                                   class="bg-gray-50 border @error('notes') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                   placeholder="Any special instructions, materials needed, or important reminders for this session">{{ old('notes', $trainingBatchScheduleItem->notes) }}</textarea>
+                              <p class="mt-1 text-xs text-gray-500">Include any special requirements, materials, or preparation notes</p>
+                              @error('notes')
+                              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                              @enderror
+                         </div>
+                    </div>
+
+                    {{-- Form Actions --}}
+                    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                         <button
+                              type="submit"
+                              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                              Update Session
+                         </button>
+                         <button
+                              type="button"
+                              onclick="confirmDelete()"
+                              class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-3 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800">
+                              Delete Session
+                         </button>
+
+                         <a href="{{ route('training_batch_schedule_items.index') }}"
+                              class="py-2.5 px-5 ml-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                              Cancel
+                         </a>
+                    </div>
+               </form>
+
+               {{-- Hidden Delete Form --}}
+               <form id="delete-session-form" action="{{ route('training_batch_schedule_items.destroy', $trainingBatchScheduleItem->uuid) }}" method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
+               </form>
+          </div>
+     </div>
+
+     {{-- Delete Confirmation Script --}}
+     <script>
+          function confirmDelete() {
+               if (confirm('Are you sure you want to delete this training session? This action cannot be undone.')) {
+                    document.getElementById('delete-session-form').submit();
+               }
+          }
+     </script>
+</x-layouts.app.flowbite>

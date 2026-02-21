@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'email' => config('app.admin_email'),
             'uuid' =>  Str::orderedUuid(),
             'password' => Hash::make('password'), // Default password
+            'email_verified_at' => now()
         ]);
         $userAdmin->assignRole('Super Admin');
     }

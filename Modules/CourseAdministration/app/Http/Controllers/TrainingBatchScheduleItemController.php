@@ -5,6 +5,7 @@ namespace Modules\CourseAdministration\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\CourseAdministration\Http\Requests\CreateTrainingBatchScheduleItemRequest;
+use Modules\CourseAdministration\Http\Requests\UpdateTrainingBatchScheduleItemRequest;
 use Modules\CourseAdministration\Models\TrainingBatch;
 use Modules\CourseAdministration\Repositories\TrainingBatchRepository;
 use Modules\CourseAdministration\Repositories\TrainingBatchScheduleItemRepository;
@@ -43,6 +44,7 @@ class TrainingBatchScheduleItemController extends Controller
         // Get necessary data for the form
         $trainingBatches = $this->trainingBatchRepository->all();
         $trainingScheduleItems = $this->trainingScheduleItemRepository->all();
+        // dd($trainingScheduleItems);
         // Return the create view with data
         return view('courseadministration.schedule_batch_items.create', compact('trainingBatches', 'trainingScheduleItems'));
     }
@@ -52,7 +54,7 @@ class TrainingBatchScheduleItemController extends Controller
      */
     public function store(CreateTrainingBatchScheduleItemRequest $request)
     {
-        // Validate and get the validated data
+        // Validate and get the validated dat
         $validatedData = $request->validated();
         // Create the training batch schedule item
         $trainingBatchScheduleItem = $this->trainingBatchScheduleItemRepository->create($validatedData);
@@ -86,7 +88,7 @@ class TrainingBatchScheduleItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $uuid)
+    public function update(UpdateTrainingBatchScheduleItemRequest $request, $uuid)
     {
         // Validate and get the validated data
         $validatedData = $request->validated();

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Learner;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -32,11 +33,15 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        // Edited..
+        // Create the user and assign the 'Student' role
+        $user = User::create([
             'name' => $input['name'],
             'last_name' => $input['last_name'],
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
+        $user->assignRole('Student');
+        return $user;
     }
 }

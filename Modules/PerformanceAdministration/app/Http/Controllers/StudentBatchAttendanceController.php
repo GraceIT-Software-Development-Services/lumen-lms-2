@@ -23,6 +23,11 @@ class StudentBatchAttendanceController extends Controller
         return view('performanceadministration.student_batch_attendance.index');
     }
 
+    public function studentAttendanceReport($trainingBatchUuid)
+    {
+        return view('performanceadministration.report_attendance.student_attendance_report', compact('trainingBatchUuid'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -75,5 +80,11 @@ class StudentBatchAttendanceController extends Controller
     {
         $this->trainingStudentBatchAttendanceRepository->deleteByUuid($uuid);
         return redirect()->route('student_batch_attendances.index')->with('success', 'Student Batch Attendance deleted successfully.');
+    }
+
+
+    public function createStudentAttendance($trainingBatchUuid)
+    {
+        return view('performanceadministration.student_batch_attendance.create', compact('trainingBatchUuid'));
     }
 }
