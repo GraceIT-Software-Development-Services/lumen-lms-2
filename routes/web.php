@@ -126,15 +126,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // Register new applications
+
+    Route::get('learner-training-applications/create', [LearnerTrainingApplicationController::class, 'create'])->name('learner-training-applications.create');
+
+    Route::get('learner-training-applications/register/{uuid}', [LearnerTrainingApplicationController::class, 'registerExistingApplication'])->name('learner-training-applications.register.existing.application');
+
     Route::get('learner-training-applications/register', [LearnerTrainingApplicationController::class, 'registerApplication'])->name('learner-training-applications.register.application');
     Route::get('learner-training-applications/register/update/{uuid}', [LearnerTrainingApplicationController::class, 'updateRegisteredApplication'])->name('learner-training-applications.update.registered.application');
 
+
     // Learner Training Application Routes
     Route::get('learner-training-applications/approve-application-no-batch', [LearnerTrainingApplicationController::class, 'registerApplicationNoBatch'])->name('learner-training-applications.approve.application.no.batch');
+    Route::get('learner-training-applications/list', [LearnerTrainingApplicationController::class, 'listRegisteredApplicants'])->name('learner-training-applications.list.registered.applicants');
+    Route::get('learner-training-applications/{uuid}', [LearnerTrainingApplicationController::class, 'show'])->name('learner-training-applications.show');
+
 
     Route::get('learner-training-applications', [LearnerTrainingApplicationController::class, 'index'])->name('learner-training-applications.index');
-    Route::get('learner-training-applications/create', [LearnerTrainingApplicationController::class, 'create'])->name('learner-training-applications.create');
-    Route::get('learner-training-applications/{uuid}', [LearnerTrainingApplicationController::class, 'show'])->name('learner-training-applications.show');
+
+
+
 
 
     // Applicants View

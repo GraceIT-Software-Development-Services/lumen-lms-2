@@ -8,12 +8,12 @@
         <div class="flex items-center gap-3">
 
             <div class="relative">
-                <a href="{{ route('learner-training-applications.register.application') }}"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-sm transition">
+                <a href="{{ route('learner-training-applications.list.registered.applicants') }}"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                     </svg>
-                    New Student Application
+                    List of all registered applicants
                 </a>
             </div>
 
@@ -102,8 +102,8 @@
         <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-red-500 uppercase tracking-wider">Rejected</p>
-                    <p class="text-2xl font-bold text-gray-600 mt-1">{{ number_format($totalRejectedAppplication) }}</p>
+                    <p class="text-xs font-medium text-yellow-500 uppercase tracking-wider">Cancelled</p>
+                    <p class="text-2xl font-bold text-gray-600 mt-1">{{ number_format($totalCancelledAppplication) }}</p>
                 </div>
                 <div class="p-3 bg-red-50 rounded-lg">
                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@
                                 </div> -->
                                 <div>
                                     <div class="font-semibold text-gray-800">
-                                        {{ $applicant->name }} {{ $applicant->last_name }}
+                                        {{ $applicant->full_name_searchable }}
                                     </div>
                                     <div class="text-xs text-gray-500">
                                         {{ $applicant->email }}
@@ -199,9 +199,16 @@
                                 </svg>
                                 Rejected
                             </span>
+                            @elseif($applicant->status === 'cancelled')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                Cancelled
+                            </span>
                             @endif
                         </td>
-                        <td class="px-5 py-3.5 text-right border border-gray-200">
+                        <td class="px-5 py-3.5 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 @if ($applicant->registration_type == "online" && $applicant->status == "pending")
                                 <button wire:click.prevent="toggleModalOnlineApplication({{ $applicant->id }})"
@@ -212,25 +219,21 @@
                                     </svg>
                                     Review
                                 </button>
-                                <span class="text-gray-300">|</span>
+                                span class="text-gray-300">|</span>
                                 @endif
 
-                                <a href="#"
-                                    class="inline-flex items-center gap-1 text-emerald-500 hover:text-emerald-700 font-medium text-sm transition">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
-                                    </svg>
-                                    Enroll
-                                </a>
-                                <span class="text-gray-300">|</span>
+                                @if ($applicant->status == "pending")
+                                @if ($applicant->registration_type == "online")
 
-                                <a href="{{ route('learner-training-applications.update.registered.application', $applicant->uuid) }}"
-                                    class="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 font-medium text-sm transition">
+                                @endif
+                                <button wire:click.prevent="cancelApplication('{{ $applicant->uuid }}')" wire:confirm="Are you sure you want to cancel this application? This action cannot be undone."
+                                    class="inline-flex items-center gap-1 text-yellow-500 hover:text-yellow-700 font-medium text-sm transition">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
                                     </svg>
-                                    View
-                                </a>
+                                    Cancel
+                                </button>
+                                @endif
                             </div>
                         </td>
                     </tr>

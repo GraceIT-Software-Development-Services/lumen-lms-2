@@ -14,8 +14,7 @@
 
                 @if($isEditMode)
                 <div class="flex flex-col items-end">
-                    <span class="text-xl text-gray-600 font-bold dark:text-gray-400 tracking-wide">Unique Learner Identifier (ULI): ULI-0001-4235</span>
-                    <span class="text-lg font-mono font-semibold text-blue-600 dark:text-blue-400">{{ $uli }}</span>
+                    <span class="text-xl text-red-600 font-bold dark:text-gray-400 tracking-wide">Unique Learner Identifier (ULI): {{ strtoupper($uli) }}</span>
                 </div>
                 @endif
             </div>

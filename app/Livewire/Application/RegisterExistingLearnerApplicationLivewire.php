@@ -3,28 +3,26 @@
 namespace App\Livewire\Application;
 
 use App\Http\Requests\CreateRegisterLearnerApplicationRequest;
+use App\Http\Requests\UpdateRegisterLearnerApplicationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Modules\CourseAdministration\Models\LearnerTrainingApplication;
 use Modules\CourseAdministration\Models\TrainingBatch;
-use Modules\CourseAdministration\Models\TrainingBatchStudent;
-use Modules\CourseAdministration\Models\TrainingCenterCourse;
 use Modules\CourseAdministration\Models\TrainingCourse;
-use Modules\CourseAdministration\Repositories\TrainingBatchRepository;
 use Modules\CourseAdministration\Repositories\TrainingBatchStudentRepository;
-use Modules\CourseAdministration\Repositories\TrainingCourseRepository;
 use Modules\Institution\Models\Center;
-use Modules\Institution\Repositories\TrainingCenterRepository;
 
-class RegisterLearnerApplicationLivewire extends Component
+class RegisterExistingLearnerApplicationLivewire extends Component
 {
     use WithFileUploads;
 
     public $userId;
+    public $user = null;
 
     public $centerId;
     public $centers = [];
@@ -87,9 +85,97 @@ class RegisterLearnerApplicationLivewire extends Component
     public $licensureExamination = [];
     public $competencyAssessment = [];
 
+    private function checkLearnerCurrentApplicationStatus($userId)
+    {
+        $existingApplication = LearnerTrainingApplication::where('user_id', $userId)
+            ->whereIn('status', ['approved'])
+            ->orderBy('application_date', 'desc')
+            ->first();
+
+        // Set batchId if there's an existing approved application to prevent batch assignment in the form
+        $trainingBatchId = $existingApplication ? $existingApplication->training_batch_id : null;
+        $trainingCenterId = $existingApplication ? $existingApplication->center_id : null;
+
+        $trainingBatch = TrainingBatch::where(['id' => $trainingBatchId, 'center_id' => $trainingCenterId])->first();
+        if ($trainingBatch) {
+            if (in_array($trainingBatch->status, ['full', 'open', 'ongoing'])) {
+                session()->flash('error', 'This learner already has an active training batch. Please check the learner\'s current application status.');
+                return redirect()->route('learner-applications-list.index');
+            }
+        }
+    }
+
     public function mount($userId = null)
     {
+        $this->checkLearnerCurrentApplicationStatus($userId);
         $this->initializeEmptyArrays();
+
+        $this->userId = $userId;
+        $this->user = User::findOrFail($this->userId);
+
+        $this->uli                     = $this->user->uli;
+        // Personal Info
+        $this->firstName                = $this->user->name;
+        $this->middleName               = $this->user->middle_name;
+        $this->lastName                 = $this->user->last_name;
+        $this->suffix                   = $this->user->extension;
+        $this->sex                      = $this->user->sex;
+        $this->civilStatus              = $this->user->civil_status;
+        $this->birthDate                = $this->user->birth_date;
+        $this->birthPlace               = $this->user->birth_place;
+
+        // Contact Info
+        $this->contactEmail             = $this->user->contact_email;
+        $this->contactTel               = $this->user->contact_tel;
+        $this->contactMobile            = $this->user->contact_mobile;
+        $this->contactFax               = $this->user->contact_fax;
+        $this->contactOthers            = $this->user->contact_others;
+
+        // Address
+        $this->addressNumberStreet      = $this->user->address_number_street;
+        $this->addressBarangay          = $this->user->address_barangay;
+        $this->addressCity              = $this->user->address_city;
+        $this->addressDistrict          = $this->user->address_district;
+        $this->addressProvince          = $this->user->address_province;
+        $this->addressRegion            = $this->user->address_region;
+        $this->addressZipCode           = $this->user->address_zip_code;
+
+        // Education & Employment
+        $this->clientType               = $this->user->client_type;
+        $this->educationalAttainment    = $this->user->educational_attainment;
+        $this->educationalAttainmentOthers = $this->user->educational_attainment_others;
+        $this->employmentStatus         = $this->user->employment_status;
+        $this->registrationType         = $this->user->registration_type;
+
+        // School
+        $this->schoolName               = $this->user->school_name;
+        $this->schoolAddress            = $this->user->school_address;
+
+        // Family
+        $this->motherName               = $this->user->mother_name;
+        $this->fatherName               = $this->user->father_name;
+
+        // Profile
+        $this->uli                      = $this->user->uli;
+        $this->currentPicturePath       = $this->user->picture_path;
+
+        // JSON fields
+        // JSON fields
+        $this->workExperiences      = is_string($this->user->work_experiences)
+            ? json_decode($this->user->work_experiences, true) ?? []
+            : ($this->user->work_experiences ?? []);
+
+        $this->trainings            = is_string($this->user->trainings)
+            ? json_decode($this->user->trainings, true) ?? []
+            : ($this->user->trainings ?? []);
+
+        $this->licensureExamination = is_string($this->user->licensure_examination)
+            ? json_decode($this->user->licensure_examination, true) ?? []
+            : ($this->user->licensure_examination ?? []);
+
+        $this->competencyAssessment = is_string($this->user->competency_assessment)
+            ? json_decode($this->user->competency_assessment, true) ?? []
+            : ($this->user->competency_assessment ?? []);
     }
 
     protected function initializeEmptyArrays()
@@ -170,19 +256,28 @@ class RegisterLearnerApplicationLivewire extends Component
 
     public function save()
     {
+        $rules = (new UpdateRegisterLearnerApplicationRequest())->rules();
+
+        // Override email rule to ignore current learner
+        $rules['contactEmail'] = [
+            'nullable',
+            'email',
+            'max:255',
+            Rule::unique('users', 'email')->ignore($this->user->id)
+        ];
+
         $validated = $this->validate(
-            (new CreateRegisterLearnerApplicationRequest())->rules(),
-            (new CreateRegisterLearnerApplicationRequest())->messages(),
+            $rules,
+            (new UpdateRegisterLearnerApplicationRequest())->messages(),
         );
 
         $data = [
+            'uli' => $validated['uli'],
             'name' => $validated['firstName'],
             'middle_name' => $validated['middleName'],
             'last_name' => $validated['lastName'],
             'extension' => $validated['suffix'],
             'email' => $validated['contactEmail'],
-            'password' => Hash::make('password'),
-            'uli' => $validated['uli'] ?? Str::random(16),
             'first_name' => $validated['firstName'],
             'middle_name' => $validated['middleName'] ?? null,
             'last_name' => $validated['lastName'],
@@ -218,12 +313,11 @@ class RegisterLearnerApplicationLivewire extends Component
             'licensure_examination' => isset($validated['licensureExamination']) ? json_encode($validated['licensureExamination']) : null,
             'competency_assessment' => isset($validated['competencyAssessment']) ? json_encode($validated['competencyAssessment']) : null,
         ];
-        $currentRegiterLearner = User::create($data);
-        $currentRegiterLearner->assignRole('Student');
+        $this->user->update($data);
 
         // Registration Data
         LearnerTrainingApplication::create([
-            'user_id' => $currentRegiterLearner->id,
+            'user_id' => $this->userId,
             'center_id' => $this->centerId,
             'training_course_id' => $this->courseId,
             'training_batch_id' => $this->batchId ?? null,
@@ -240,7 +334,7 @@ class RegisterLearnerApplicationLivewire extends Component
             $trainingBatchStudentRepository = new TrainingBatchStudentRepository();
             $trainingBatchStudentRepository->create([
                 'training_batch_id' => $this->batchId,
-                'user_id' => $currentRegiterLearner->id,
+                'user_id' => $this->userId,
                 'enrollment_date' => date('Y-m-d'),
                 'enrollment_status' => 'enrolled',
             ]);
@@ -321,6 +415,6 @@ class RegisterLearnerApplicationLivewire extends Component
                 ->get();
         }
 
-        return view('livewire.application.register-learner-application-livewire');
+        return view('livewire.application.register-existing-learner-application-livewire');
     }
 }

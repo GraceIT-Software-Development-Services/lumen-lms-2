@@ -3,6 +3,7 @@
 namespace Modules\CourseAdministration\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Modules\CourseAdministration\Http\Requests\CreateLearnerTrainingApplicationRequest;
 use Modules\CourseAdministration\Repositories\LearnerTrainingApplicationRepository;
@@ -76,6 +77,12 @@ class LearnerTrainingApplicationController extends Controller
         return view('application.register-learner-application');
     }
 
+    public function registerExistingApplication($uuid)
+    {
+        $userId = User::where('uuid', $uuid)->value('id');
+        return view('application.register-existing-learner-application', compact('userId'));
+    }
+
     public function registerApplicationNoBatch()
     {
         return view('application.application-list-no-batch');
@@ -84,5 +91,10 @@ class LearnerTrainingApplicationController extends Controller
     public function updateRegisteredApplication($uuid)
     {
         return view('application.update-registered-learner-application', compact('uuid'));
+    }
+
+    public function listRegisteredApplicants()
+    {
+        return view('application.list-registered-applicants');
     }
 }

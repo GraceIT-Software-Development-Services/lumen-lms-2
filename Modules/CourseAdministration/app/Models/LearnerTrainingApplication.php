@@ -26,6 +26,7 @@ class LearnerTrainingApplication extends Model
         'reviewed_at',
         'review_remarks',
         'learner_remarks',
+        'registration_type'
     ];
 
     protected $casts = [
