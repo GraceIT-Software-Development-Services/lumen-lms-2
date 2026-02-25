@@ -123,9 +123,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('users-store.store');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users-edit.edit');
     Route::put('/users/{id}/update', [UserController::class, 'update'])->name('users-update.update');
+    // Chane password
+    Route::get('/users/change-password', [UserController::class, 'changePassword'])->name('users-change-password');
+    Route::put('/users/change-password', [UserController::class, 'updatePassword'])->name('users-update-password.update');
 
 
     // Register new applications
+
+    Route::get('learner-training-applications/application/for-confirmation', [LearnerTrainingApplicationController::class, 'listForConfirmationApplication'])->name('learner-training-applications.for.confirmation');
+    Route::get('learner-training-applications/application/review/{userUuid}', [LearnerTrainingApplicationController::class, 'listForConfirmationApplicationView'])->name('learner-training-applications.review.application');
+    Route::put('learner-training-applications/application/confirm/{userUuid}', [LearnerTrainingApplicationController::class, 'confirmLearverApplication'])->name('learner-training-applications.confirm.application');
 
     Route::get('learner-training-applications/create', [LearnerTrainingApplicationController::class, 'create'])->name('learner-training-applications.create');
 

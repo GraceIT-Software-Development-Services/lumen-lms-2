@@ -215,7 +215,15 @@ class LearnerLivewire extends Component
     public function save()
     {
         try {
-            $this->validate([
+            $documentRules = [];
+            foreach ($this->documents as $index => $document) {
+                $isNewFile = isset($document['file']) && is_object($document['file']);
+                if ($isNewFile) {
+                    $documentRules["documents.{$index}.file"] = 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240';
+                }
+            }
+
+            $this->validate(array_merge([
                 'picture' => 'nullable|image|max:2048',
                 'school_name' => 'nullable|string|max:255',
                 'school_address' => 'nullable|string',
@@ -245,7 +253,6 @@ class LearnerLivewire extends Component
 
                 'educational_attainment' => 'nullable|in:elementary_graduate,high_school_graduate,tvet_graduate,college_level,college_graduate,others',
                 'educational_attainment_others' => 'nullable|string|max:255',
-
                 'employment_status' => 'nullable|in:casual,job_order,probationary,permanent,self_employed,ofw',
 
                 'work_experiences' => 'nullable|array',
@@ -271,11 +278,7 @@ class LearnerLivewire extends Component
                 'competency_assessment.*.certificate_number' => 'nullable|string|max:255',
                 'competency_assessment.*.date_issued' => 'nullable|string|max:255',
                 'competency_assessment.*.expiry_date' => 'nullable|string|max:255',
-
-                // You have this WRONG in your messages array:
-                'documents.*.file' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf|max:10240',
-            ], [
-                // Basic Information
+            ], $documentRules), [
                 'picture.image' => 'The file must be an image.',
                 'picture.max' => 'The picture size must not exceed 2MB.',
                 'school_name.string' => 'The school name must be a valid text.',
@@ -285,7 +288,6 @@ class LearnerLivewire extends Component
                 'registration_type.required' => 'The registration type is required.',
                 'registration_type.in' => 'Please select a valid registration type.',
 
-                // Personal Information
                 'sex.in' => 'Please select a valid sex.',
                 'civil_status.in' => 'Please select a valid civil status.',
                 'birth_date.date' => 'The birth date must be a valid date.',
@@ -296,7 +298,6 @@ class LearnerLivewire extends Component
                 'father_name.string' => 'The father\'s name must be a valid text.',
                 'father_name.max' => 'The father\'s name must not exceed 255 characters.',
 
-                // Address Information
                 'address_number_street.string' => 'The street address must be a valid text.',
                 'address_barangay.string' => 'The barangay must be a valid text.',
                 'address_barangay.max' => 'The barangay must not exceed 255 characters.',
@@ -311,7 +312,6 @@ class LearnerLivewire extends Component
                 'address_zip_code.string' => 'The ZIP code must be a valid text.',
                 'address_zip_code.max' => 'The ZIP code must not exceed 10 characters.',
 
-                // Contact Information
                 'contact_mobile.string' => 'The mobile number must be a valid text.',
                 'contact_mobile.max' => 'The mobile number must not exceed 255 characters.',
                 'contact_tel.string' => 'The telephone number must be a valid text.',
@@ -322,15 +322,11 @@ class LearnerLivewire extends Component
                 'contact_fax.max' => 'The fax number must not exceed 255 characters.',
                 'contact_others.string' => 'The other contact information must be a valid text.',
 
-                // Educational Attainment
                 'educational_attainment.in' => 'Please select a valid educational attainment.',
                 'educational_attainment_others.string' => 'The educational attainment (others) must be a valid text.',
                 'educational_attainment_others.max' => 'The educational attainment (others) must not exceed 255 characters.',
-
-                // Employment Status
                 'employment_status.in' => 'Please select a valid employment status.',
 
-                // Work Experiences
                 'work_experiences.array' => 'Work experiences must be a valid list.',
                 'work_experiences.*.company.string' => 'The company name must be a valid text.',
                 'work_experiences.*.company.max' => 'The company name must not exceed 255 characters.',
@@ -340,7 +336,6 @@ class LearnerLivewire extends Component
                 'work_experiences.*.duration.max' => 'The duration must not exceed 255 characters.',
                 'work_experiences.*.responsibilities.string' => 'The responsibilities must be a valid text.',
 
-                // Trainings
                 'trainings.array' => 'Trainings must be a valid list.',
                 'trainings.*.title.string' => 'The training title must be a valid text.',
                 'trainings.*.title.max' => 'The training title must not exceed 255 characters.',
@@ -351,7 +346,6 @@ class LearnerLivewire extends Component
                 'trainings.*.hours.string' => 'The training hours must be a valid text.',
                 'trainings.*.hours.max' => 'The training hours must not exceed 255 characters.',
 
-                // Licensure Examination
                 'licensure_examination.array' => 'Licensure examinations must be a valid list.',
                 'licensure_examination.*.title.string' => 'The examination title must be a valid text.',
                 'licensure_examination.*.title.max' => 'The examination title must not exceed 255 characters.',
@@ -362,7 +356,6 @@ class LearnerLivewire extends Component
                 'licensure_examination.*.validity.string' => 'The validity must be a valid text.',
                 'licensure_examination.*.validity.max' => 'The validity must not exceed 255 characters.',
 
-                // Competency Assessment
                 'competency_assessment.array' => 'Competency assessments must be a valid list.',
                 'competency_assessment.*.qualification.string' => 'The qualification must be a valid text.',
                 'competency_assessment.*.qualification.max' => 'The qualification must not exceed 255 characters.',
@@ -373,9 +366,8 @@ class LearnerLivewire extends Component
                 'competency_assessment.*.expiry_date.string' => 'The expiry date must be a valid text.',
                 'competency_assessment.*.expiry_date.max' => 'The expiry date must not exceed 255 characters.',
 
-
                 'documents.*.file.file' => 'The document must be a valid file.',
-                'documents.*.file.mimes' => 'The document must be a file of type: jpg, jpeg, png, pdf, doc, docx.',
+                'documents.*.file.mimes' => 'The document must be a file of type: jpg, jpeg, png, pdf.',
                 'documents.*.file.max' => 'The document must not exceed 10MB.',
             ]);
 
@@ -409,7 +401,6 @@ class LearnerLivewire extends Component
 
                 'educational_attainment' => $this->educational_attainment,
                 'educational_attainment_others' => $this->educational_attainment_others,
-
                 'employment_status' => $this->employment_status,
 
                 'work_experiences' => !empty($this->work_experiences) ? json_encode($this->work_experiences) : null,
@@ -420,7 +411,6 @@ class LearnerLivewire extends Component
 
             // Handle picture upload
             if ($this->picture) {
-                // Delete old picture if exists
                 if ($this->isEditMode && $this->current_picture_path) {
                     Storage::delete($this->current_picture_path);
                 }
@@ -432,6 +422,7 @@ class LearnerLivewire extends Component
 
                 foreach ($this->documents as $document) {
                     $isNewFile = isset($document['file']) && is_object($document['file']);
+
                     if ($isNewFile) {
                         $filePath = $document['file']->store('learner-documents', 's3');
 
@@ -448,7 +439,6 @@ class LearnerLivewire extends Component
                             ]);
                         }
                     } elseif (isset($document['id'])) {
-                        dd("update document type only");
                         UserDocument::where('id', $document['id'])->update([
                             'type' => $document['type'],
                         ]);
@@ -458,9 +448,10 @@ class LearnerLivewire extends Component
                 session()->flash('success', 'Learner information updated successfully!');
             } else {
                 $user = User::create($data);
+
                 if ($user) {
                     foreach ($this->documents as $document) {
-                        if (isset($document['file'])) {
+                        if (isset($document['file']) && is_object($document['file'])) {
                             $filePath = $document['file']->store('learner-documents', 's3');
                             UserDocument::create([
                                 'user_id' => $user->id,
@@ -475,7 +466,9 @@ class LearnerLivewire extends Component
                 return redirect()->route('learners.index');
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors(), "Click");
+            throw $e;
+        } catch (\Exception $e) {
+            session()->flash('danger', $e->getMessage());
         }
     }
 

@@ -94,7 +94,7 @@ class ApplicationListNoBatchLivewire extends Component
                 // Title
                 $pdf->SetFont('Arial', 'B', 14);
                 $pdf->SetTextColor(0, 0, 0);
-                $pdf->Cell(0, 10, 'Pending Learners Report', 0, 1, 'C');
+                $pdf->Cell(0, 10, 'Pending Course Application Report', 0, 1, 'C');
 
                 // Date
                 $pdf->SetFont('Arial', '', 8);

@@ -210,7 +210,7 @@
                          </div>
                     </div>
 
-                    @if (auth()->user()->hasRole('Super Admin'))
+                    @if (auth()->user()->hasRole('Business Admin'))
                     {{-- Center Information --}}
                     <div class="p-4 md:p-5 space-y-4">
                          <h2 class="text-lg font-semibold text-gray-900 mb-4">Center Information</h2>

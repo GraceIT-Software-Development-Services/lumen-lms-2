@@ -117,6 +117,8 @@ class ApplicationListLivewire extends Component
             ->leftjoin('training_batches', 'training_batches.id', '=', 'learner_training_applications.training_batch_id')
             // Filter by learner
             ->whereIn('learner_training_applications.status', ['pending', 'approved', 'cancelled'])
+            ->whereNotNull('learner_training_applications.training_batch_id')
+            ->where('users.is_confirmed', true)
             // Search filter
             ->when($this->search, function ($query) {
                 $query->where(function ($subQuery) {

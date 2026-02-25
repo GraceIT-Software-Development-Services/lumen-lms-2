@@ -55,7 +55,7 @@ class TrainingBatchController extends Controller
         $validatedData = $request->validated();
 
         // Assign center_id based on role
-        $validatedData['center_id'] = auth()->user()->hasRole('Super Admin')
+        $validatedData['center_id'] = auth()->user()->hasRole('Business Admin')
             ? ($validatedData['center_id'] ?? null)
             : auth()->user()->center_id;
 

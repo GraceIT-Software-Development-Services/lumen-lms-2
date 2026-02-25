@@ -357,7 +357,7 @@
                                     <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
                                     </svg>
-                                    <a href="{{ Storage::disk('s3')->temporaryUrl($document['file'], now()->addSecond(3)) }}" target="_blank" class="text-sm text-blue-600 hover:underline truncate">
+                                    <a href="{{ Storage::disk('s3')->temporaryUrl($document['file'], now()->addMinute(1)) }}" target="_blank" class="text-sm text-blue-600 hover:underline truncate">
                                         {{ basename($document['file']) }}
                                     </a>
                                 </div>
@@ -369,6 +369,8 @@
                         @endforelse
                     </div>
                 </div>
+
+
 
                 {{-- Form Actions --}}
                 <div class="flex flex-wrap items-center gap-3 p-4 md:p-5 border-t border-gray-200 rounded-b">

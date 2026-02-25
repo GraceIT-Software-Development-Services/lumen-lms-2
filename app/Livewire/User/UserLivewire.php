@@ -15,7 +15,13 @@ class UserLivewire extends Component
     public function render()
     {
         // $users = User::role(['Super Admin', 'Trainer'])->paginate($this->perPage);
-        $users = User::role(['Super Admin', 'Trainer', 'Center Admin'])->paginate($this->perPage);
+        $user = [];
+        if (auth()->user()->hasRole('Super Admin')) {
+            $users = User::role(['Business Admin', 'Trainer', 'Center Admin'])->paginate($this->perPage);
+        } else {
+            $users = User::role(['Trainer', 'Center Admin'])->paginate($this->perPage);
+        }
+
         $roles = Role::all();
 
         $centers = Center::all();
