@@ -81,6 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'competency_assessment',
 
         'center_id',
+        'is_confirmed'
     ];
 
     public function getActivitylogOptions(): LogOptions

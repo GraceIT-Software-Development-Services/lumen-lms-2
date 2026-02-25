@@ -29,7 +29,7 @@ class RoleSeeder extends Seeder
         ];
         $roleAdmin->givePermissionTo($permissions);
 
-        $roles = ['Student', 'Trainer', 'Center Admin', 'Course Admin'];
+        $roles = ['Student', 'Trainer', 'Center Admin', 'Business Admin'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
