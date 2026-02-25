@@ -59,7 +59,6 @@ class CreateUserRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised(),
             ],
             'role' => [
                 'required',
