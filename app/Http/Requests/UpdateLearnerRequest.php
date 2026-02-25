@@ -6,14 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class CreateRegisterLearnerApplicationRequest extends FormRequest
+class UpdateLearnerRequest extends FormRequest
 {
-
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
         return Auth::check();
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
@@ -21,9 +28,6 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
                 'nullable',
                 'string',
             ],
-            'courseId' => ['required'],
-            'batchId' => ['nullable'],
-            'centerId' => ['required'],
 
             // Basic Information - Required Fields
             'firstName' => ['required', 'string', 'max:255'],
@@ -38,13 +42,6 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')
             ],
-            'password' => [
-                'nullable',
-                'string',
-                'min:8',
-                'confirmed'
-            ],
-
             // Profile Picture
             'currentPicturePath' => ['nullable', 'string', 'max:500'],
 
@@ -133,12 +130,6 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
                 ])
             ],
 
-            // Registration Type
-            'registrationType' => [
-                'nullable',
-                Rule::in(['online', 'onsite'])
-            ],
-
             // JSON Fields - Work Experiences
             'workExperiences' => ['nullable', 'array', 'max:20'],
             // JSON Fields - Trainings
@@ -150,18 +141,10 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
             'uli.string' => 'The unique learner identifier must be a string.',
-            // Course and Batch indetifier
-            'courseId.required' => 'The training course field is required.',
-            'centerId.required' => 'The training center field is required.',
 
             // Basic Information
             'firstName.required' => 'The first name field is required.',
@@ -173,9 +156,6 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
             'contactEmail.required' => 'The email address is required.',
             'contactEmail.email' => 'Please provide a valid email address.',
             'contactEmail.unique' => 'This email address is already registered.',
-            'password.required' => 'The password field is required.',
-            'password.min' => 'The password must be at least 8 characters.',
-            'password.confirmed' => 'The password confirmation does not match.',
 
             // UUID
             'uli.unique' => 'This identifier is already in use.',

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class CreateUserRequest extends FormRequest
@@ -28,7 +29,7 @@ class CreateUserRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-Z\s\-\.]+$/', // Only letters, spaces, hyphens, and periods
+                'regex:/^[a-zA-Z\s\-\.]+$/',
             ],
             'middle_name' => [
                 'nullable',
@@ -63,9 +64,11 @@ class CreateUserRequest extends FormRequest
             'role' => [
                 'required',
                 'string',
+                'exists:roles,name',
             ],
             'center_id' => [
-                'required',
+                Rule::requiredIf(fn() => in_array($this->role, ['Center Admin', 'Trainer'])),
+                'nullable',
                 'integer',
                 'exists:centers,id',
             ],

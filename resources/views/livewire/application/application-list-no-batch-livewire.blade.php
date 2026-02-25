@@ -2,10 +2,22 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-            <h1 class="text-xl font-semibold text-gray-800">List od application without assigned training batch</h1>
+            <h1 class="text-xl font-semibold text-gray-800">List of application without assigned training batch</h1>
             <p class="text-sm text-gray-400 mt-0.5">Review and manage all training applications</p>
         </div>
         <div class="flex items-center gap-3">
+
+            <div class="relative">
+                <button wire:click.prevent="printReport()"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-sm transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Print Report (No Assigned batch)
+                </button>
+            </div>
+
             <div class="relative">
                 <button wire:click.prevent="assignTrainingBatch()"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-sm transition">
@@ -76,7 +88,6 @@
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Assigned Batch</th>
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Application Date</th>
                         <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                        <th class="px-5 py-3"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -147,23 +158,10 @@
                             </span>
                             @endif
                         </td>
-                        <td class="px-5 py-3.5 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                @if ($applicant->registration_type == "online" && $applicant->status == "pending")
-                                <button wire:click.prevent="toggleModalOnlineApplication({{ $applicant->id }})" class="text-indigo-500 hover:text-indigo-700 font-medium text-sm transition">
-                                    Review
-                                </button>
-                                <span class="text-gray-300">|</span>
-                                @endif
-                                <a href="{{ route('learner-training-applications.update.registered.application', $applicant->uuid) }}" class="text-gray-500 hover:text-gray-700 font-medium text-sm transition">
-                                    View →
-                                </a>
-                            </div>
-                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-5 py-12 text-center">
+                        <td colspan="8" class="px-5 py-12 text-center">
                             <svg class="mx-auto w-12 h-12 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                             </svg>
@@ -301,4 +299,24 @@
         </div>
     </div>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Livewire.on('open-pdf', (event) => {
+                const base64 = event.pdf;
+                const byteCharacters = atob(base64);
+                const byteNumbers = Array.from(byteCharacters, c => c.charCodeAt(0));
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], {
+                    type: 'application/pdf'
+                });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const win = window.open(blobUrl, '_blank');
+                if (win) {
+                    win.onload = () => win.print();
+                }
+            });
+        });
+    </script>
 </div>

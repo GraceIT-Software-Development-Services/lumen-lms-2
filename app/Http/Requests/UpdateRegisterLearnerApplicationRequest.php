@@ -24,8 +24,14 @@ class UpdateRegisterLearnerApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'uli' => [
+                'nullable',
+                'string',
+            ],
+
             'courseId' => ['required'],
-            'batchId' => ['required'],
+            'batchId' => ['nullable'],
+            'centerId' => ['required'],
 
             // Basic Information - Required Fields
             'firstName' => ['required', 'string', 'max:255'],
@@ -39,6 +45,12 @@ class UpdateRegisterLearnerApplicationRequest extends FormRequest
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')
+            ],
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed'
             ],
 
             // Profile Picture
@@ -129,6 +141,12 @@ class UpdateRegisterLearnerApplicationRequest extends FormRequest
                 ])
             ],
 
+            // Registration Type
+            'registrationType' => [
+                'nullable',
+                Rule::in(['online', 'onsite'])
+            ],
+
             // JSON Fields - Work Experiences
             'workExperiences' => ['nullable', 'array', 'max:20'],
             // JSON Fields - Trainings
@@ -143,9 +161,10 @@ class UpdateRegisterLearnerApplicationRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'uli.string' => 'The unique learner identifier must be a string.',
             // Course and Batch indetifier
             'courseId.required' => 'The training course field is required.',
-            'batchId.required' => 'The training batch field is required.',
+            'centerId.required' => 'The training center field is required.',
 
             // Basic Information
             'firstName.required' => 'The first name field is required.',
@@ -157,6 +176,12 @@ class UpdateRegisterLearnerApplicationRequest extends FormRequest
             'contactEmail.required' => 'The email address is required.',
             'contactEmail.email' => 'Please provide a valid email address.',
             'contactEmail.unique' => 'This email address is already registered.',
+            'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
+
+            // UUID
+            'uli.unique' => 'This identifier is already in use.',
 
             // Picture
             'currentPicturePath.max' => 'The picture path may not be greater than 500 characters.',

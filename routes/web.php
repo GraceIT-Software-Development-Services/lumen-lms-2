@@ -123,18 +123,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('users-store.store');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users-edit.edit');
     Route::put('/users/{id}/update', [UserController::class, 'update'])->name('users-update.update');
+    // Chane password
+    Route::get('/users/change-password', [UserController::class, 'changePassword'])->name('users-change-password');
+    Route::put('/users/change-password', [UserController::class, 'updatePassword'])->name('users-update-password.update');
 
 
     // Register new applications
+
+    Route::get('learner-training-applications/application/for-confirmation', [LearnerTrainingApplicationController::class, 'listForConfirmationApplication'])->name('learner-training-applications.for.confirmation');
+    Route::get('learner-training-applications/application/review/{userUuid}', [LearnerTrainingApplicationController::class, 'listForConfirmationApplicationView'])->name('learner-training-applications.review.application');
+    Route::put('learner-training-applications/application/confirm/{userUuid}', [LearnerTrainingApplicationController::class, 'confirmLearverApplication'])->name('learner-training-applications.confirm.application');
+
+    Route::get('learner-training-applications/create', [LearnerTrainingApplicationController::class, 'create'])->name('learner-training-applications.create');
+
+    Route::get('learner-training-applications/register/{uuid}', [LearnerTrainingApplicationController::class, 'registerExistingApplication'])->name('learner-training-applications.register.existing.application');
+
     Route::get('learner-training-applications/register', [LearnerTrainingApplicationController::class, 'registerApplication'])->name('learner-training-applications.register.application');
     Route::get('learner-training-applications/register/update/{uuid}', [LearnerTrainingApplicationController::class, 'updateRegisteredApplication'])->name('learner-training-applications.update.registered.application');
 
+
     // Learner Training Application Routes
     Route::get('learner-training-applications/approve-application-no-batch', [LearnerTrainingApplicationController::class, 'registerApplicationNoBatch'])->name('learner-training-applications.approve.application.no.batch');
+    Route::get('learner-training-applications/list', [LearnerTrainingApplicationController::class, 'listRegisteredApplicants'])->name('learner-training-applications.list.registered.applicants');
+    Route::get('learner-training-applications/{uuid}', [LearnerTrainingApplicationController::class, 'show'])->name('learner-training-applications.show');
+
 
     Route::get('learner-training-applications', [LearnerTrainingApplicationController::class, 'index'])->name('learner-training-applications.index');
-    Route::get('learner-training-applications/create', [LearnerTrainingApplicationController::class, 'create'])->name('learner-training-applications.create');
-    Route::get('learner-training-applications/{uuid}', [LearnerTrainingApplicationController::class, 'show'])->name('learner-training-applications.show');
+
+
+
 
 
     // Applicants View

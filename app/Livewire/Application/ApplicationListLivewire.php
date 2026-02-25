@@ -13,7 +13,7 @@ use Modules\CourseAdministration\Models\TrainingBatchStudent;
 class ApplicationListLivewire extends Component
 {
     public $search = '';
-    public $pageCount = 10;
+    public $pageCount = 30;
     public $batches = [];
     public $selectedBatchId = null;
     public $applicationId = null;
@@ -116,7 +116,9 @@ class ApplicationListLivewire extends Component
             ->leftJoin('training_courses', 'training_courses.id', '=', 'learner_training_applications.training_course_id')
             ->leftjoin('training_batches', 'training_batches.id', '=', 'learner_training_applications.training_batch_id')
             // Filter by learner
-            ->whereIn('learner_training_applications.status', ['pending', 'approved'])
+            ->whereIn('learner_training_applications.status', ['pending', 'approved', 'cancelled'])
+            ->whereNotNull('learner_training_applications.training_batch_id')
+            ->where('users.is_confirmed', true)
             // Search filter
             ->when($this->search, function ($query) {
                 $query->where(function ($subQuery) {
@@ -127,20 +129,39 @@ class ApplicationListLivewire extends Component
                 });
             })
 
-            ->orderByRaw("FIELD(learner_training_applications.status, 'pending', 'approved')")
+            ->orderByRaw("FIELD(learner_training_applications.status, 'pending', 'approved', 'cancelled')")
             ->paginate($this->pageCount);
 
         $totalAppplication = LearnerTrainingApplication::count();
         $totalApprovedAppplication = LearnerTrainingApplication::where('status', 'approved')->count();
         $totalPendingAppplication = LearnerTrainingApplication::where('status', 'pending')->count();
-        $totalRejectedAppplication = LearnerTrainingApplication::where('status', 'rejected')->count();
+        $totalCancelledAppplication = LearnerTrainingApplication::where('status', 'cancelled')->count();
 
         return view('livewire.application.application-list-livewire', [
             'applicants' => $applicants,
             'totalAppplication' => $totalAppplication,
             'totalApprovedAppplication' => $totalApprovedAppplication,
             'totalPendingAppplication' => $totalPendingAppplication,
-            'totalRejectedAppplication' => $totalRejectedAppplication
+            'totalCancelledAppplication' => $totalCancelledAppplication
         ]);
+    }
+
+    public function cancelApplication($applicationUuid)
+    {
+        $application = LearnerTrainingApplication::where('uuid', $applicationUuid)->first();
+        if ($application->status !== 'pending') {
+            session()->flash('error', 'Only pending applications can be cancelled.');
+            return;
+        }
+
+        try {
+            $application->update([
+                'status' => 'cancelled',
+            ]);
+
+            session()->flash('success', 'Application cancelled successfully.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Unable to cancel application. Please try again.');
+        }
     }
 }

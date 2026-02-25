@@ -40,6 +40,7 @@ class CreateNewUser implements CreatesNewUsers
             'last_name' => $input['last_name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'is_confirmed' => 0
         ]);
         $user->assignRole('Student');
         return $user;
