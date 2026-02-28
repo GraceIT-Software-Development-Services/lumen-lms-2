@@ -5,14 +5,18 @@ namespace App\Livewire\Application;
 use App\Http\Requests\UpdateLearnerRequest;
 use App\Http\Requests\UpdateRegisterLearnerApplicationRequest;
 use App\Models\User;
+use App\Models\UserDocument;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Modules\CourseAdministration\Models\LearnerTrainingApplication;
 use Modules\CourseAdministration\Models\TrainingBatch;
 use Modules\CourseAdministration\Models\TrainingCourse;
 
 class UpdateRegisteredLearnerApplicationLivewire extends Component
 {
+    use WithFileUploads;
+
     public $learner = null;
 
     public $picture;
@@ -62,6 +66,7 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
     public $trainings = [];
     public $licensureExamination = [];
     public $competencyAssessment = [];
+    public $documents = [];
 
     // Course and Batch
     public $courseId;
@@ -135,6 +140,8 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
         $this->competencyAssessment = is_string($this->learner->competency_assessment)
             ? json_decode($this->learner->competency_assessment, true) ?? []
             : ($this->learner->competency_assessment ?? []);
+
+        $this->documents = UserDocument::where('user_id', $this->learner->id)->get()->toArray();
     }
 
     // Work Experience Methods
@@ -205,6 +212,21 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
         $this->competencyAssessment = array_values($this->competencyAssessment);
     }
 
+    // Documents
+    public function addDocument()
+    {
+        $this->documents[] = [
+            'type' => '',
+            'file' => null
+        ];
+    }
+
+    public function removeDocument($index)
+    {
+        unset($this->documents[$index]);
+        $this->documents = array_values($this->documents);
+    }
+
     public function save()
     {
         $rules = (new UpdateLearnerRequest())->rules();
@@ -260,6 +282,31 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
         ];
 
         $this->learner->update($data);
+
+        foreach ($this->documents as $document) {
+            $isNewFile = isset($document['file']) && is_object($document['file']);
+
+            if ($isNewFile) {
+                $filePath = $document['file']->store('learner-documents', 's3');
+
+                if (isset($document['id'])) {
+                    UserDocument::where('id', $document['id'])->update([
+                        'type' => $document['type'],
+                        'file' => $filePath,
+                    ]);
+                } else {
+                    UserDocument::create([
+                        'user_id' => $this->learner->id,
+                        'type' => $document['type'],
+                        'file' => $filePath,
+                    ]);
+                }
+            } elseif (isset($document['id'])) {
+                UserDocument::where('id', $document['id'])->update([
+                    'type' => $document['type'],
+                ]);
+            }
+        }
 
         return redirect()->route('learner-training-applications.list.registered.applicants')
             ->with('success', 'Learner application updated successfully');

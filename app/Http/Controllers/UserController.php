@@ -25,9 +25,9 @@ class UserController extends Controller
         $roles = Role::all();
 
         if (auth()->user()->hasRole('Super Admin')) {
-            $roles = Role::whereIn('name', ['Super Admin', 'Business Admin', 'Center Admin', 'Trainer'])->get();
-        } elseif (auth()->user()->hasRole('Business Admin')) {
-            $roles = Role::whereIn('name', ['Business Admin', 'Center Admin', 'Trainer'])->get();
+            $roles = Role::whereIn('name', ['Super Admin', 'Director', 'Center Admin', 'Trainer'])->get();
+        } elseif (auth()->user()->hasRole('Director')) {
+            $roles = Role::whereIn('name', ['Director', 'Center Admin', 'Trainer'])->get();
         }
         $centers = Center::all();
 

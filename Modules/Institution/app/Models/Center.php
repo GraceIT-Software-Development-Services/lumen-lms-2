@@ -2,6 +2,7 @@
 
 namespace Modules\Institution\Models;
 
+use App\Models\User;
 use App\Traits\AdditionalUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,5 +48,11 @@ class Center extends Model
         return $this->belongsToMany(TrainingCourse::class, 'training_center_courses', 'center_id', 'training_course_id')
             ->withPivot('is_active')
             ->wherePivot('is_active', true);
+    }
+
+    public function trainers()
+    {
+        return $this->belongsToMany(User::class, 'trainer_centers', 'center_id', 'trainer_id')
+            ->withTimestamps();
     }
 }

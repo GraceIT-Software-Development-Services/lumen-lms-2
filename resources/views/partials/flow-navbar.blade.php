@@ -204,7 +204,7 @@
                     @else
 
                     <!-- Dashboard -->
-                    @if (auth()->user()->hasRole('Center Admin') || auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Center Admin') || auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Director'))
                     <li>
                         <a href="{{ route('dashboard.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -217,7 +217,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Director') || auth()->user()->hasRole('Center Admin'))
                     <li>
                         <a href="{{ route('learner-applications-list.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -270,7 +270,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Director'))
                     <li>
                         <a href="{{ route('centers.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -366,7 +366,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin') || auth()->user()->hasRole('Super Admin'))
+                    @if (auth()->user()->hasRole('Director') || auth()->user()->hasRole('Super Admin'))
                     <li>
                         <a href="{{ route('users.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">

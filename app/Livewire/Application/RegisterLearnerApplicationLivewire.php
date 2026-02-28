@@ -4,6 +4,7 @@ namespace App\Livewire\Application;
 
 use App\Http\Requests\CreateRegisterLearnerApplicationRequest;
 use App\Models\User;
+use App\Models\UserDocument;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -87,6 +88,8 @@ class RegisterLearnerApplicationLivewire extends Component
     public $licensureExamination = [];
     public $competencyAssessment = [];
 
+    public $documents = [];
+
     public function mount($userId = null)
     {
         $this->initializeEmptyArrays();
@@ -98,6 +101,7 @@ class RegisterLearnerApplicationLivewire extends Component
         $this->trainings = [];
         $this->licensureExamination = [];
         $this->competencyAssessment = [];
+        $this->documents = [];
     }
 
     // Work Experience Methods
@@ -168,12 +172,34 @@ class RegisterLearnerApplicationLivewire extends Component
         $this->competencyAssessment = array_values($this->competencyAssessment);
     }
 
+    public function addDocument()
+    {
+        $this->documents[] = [
+            'type' => '',
+            'file' => null
+        ];
+    }
+
+    public function removeDocument($index)
+    {
+        unset($this->documents[$index]);
+        $this->documents = array_values($this->documents);
+    }
+
     public function save()
     {
         $validated = $this->validate(
             (new CreateRegisterLearnerApplicationRequest())->rules(),
             (new CreateRegisterLearnerApplicationRequest())->messages(),
         );
+
+        $documentRules = [];
+        foreach ($this->documents as $index => $document) {
+            $isNewFile = isset($document['file']) && is_object($document['file']);
+            if ($isNewFile) {
+                $documentRules["documents.{$index}.file"] = 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240';
+            }
+        }
 
         $data = [
             'name' => $validated['firstName'],
@@ -182,7 +208,7 @@ class RegisterLearnerApplicationLivewire extends Component
             'extension' => $validated['suffix'],
             'email' => $validated['contactEmail'],
             'password' => Hash::make('password'),
-            'uli' => $validated['uli'] ?? Str::random(16),
+            'uli' => $validated['uli'],
             'first_name' => $validated['firstName'],
             'middle_name' => $validated['middleName'] ?? null,
             'last_name' => $validated['lastName'],
@@ -217,8 +243,23 @@ class RegisterLearnerApplicationLivewire extends Component
             'trainings' => isset($validated['trainings']) ? json_encode($validated['trainings']) : null,
             'licensure_examination' => isset($validated['licensureExamination']) ? json_encode($validated['licensureExamination']) : null,
             'competency_assessment' => isset($validated['competencyAssessment']) ? json_encode($validated['competencyAssessment']) : null,
+            'is_confirmed' => true
         ];
         $currentRegiterLearner = User::create($data);
+
+        if ($currentRegiterLearner) {
+            foreach ($this->documents as $document) {
+                if (isset($document['file']) && is_object($document['file'])) {
+                    $filePath = $document['file']->store('learner-documents', 's3');
+                    UserDocument::create([
+                        'user_id' => $currentRegiterLearner->id,
+                        'type' => $document['type'],
+                        'file' => $filePath,
+                    ]);
+                }
+            }
+        }
+
         $currentRegiterLearner->assignRole('Student');
 
         // Registration Data
