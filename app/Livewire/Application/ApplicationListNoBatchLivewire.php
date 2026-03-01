@@ -226,10 +226,14 @@ class ApplicationListNoBatchLivewire extends Component
                 ->where('user_id', $application->user_id)
                 ->exists();
 
-            $user = User::where('id', $application->user_id)->update(['is_confirmed' => 1]);
-            // Email student when batch is available
-            if ($user->email) {
-                Mail::to($user->email)->later(now()->addMinutes(1), new BatchNotificationEmail($user));
+            $user = User::find($application->user_id);
+
+            if ($user) {
+                $user->update(['is_confirmed' => 1]);
+
+                if ($user->email) {
+                    // Mail::to($user->email)->later(now()->addMinutes(1), new BatchNotificationEmail($user));
+                }
             }
 
             if (!$alreadyEnrolled) {

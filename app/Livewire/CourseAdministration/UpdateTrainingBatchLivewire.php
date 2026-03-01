@@ -3,13 +3,14 @@
 namespace App\Livewire\CourseAdministration;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\CourseAdministration\Models\TrainingBatch;
 use Modules\CourseAdministration\Models\TrainingCourse;
 use Modules\CourseAdministration\Models\TrainingScheduleItem;
 use Modules\Institution\Models\Center;
 
-class CreateTrainingBatchLivewire extends Component
+class UpdateTrainingBatchLivewire extends Component
 {
     // ─── Trainer Batch List ─────────────────────────────────────
     public $trainerBatchList    = [];
@@ -30,6 +31,8 @@ class CreateTrainingBatchLivewire extends Component
     public $notes;
 
     public $editingBatchId = null;
+
+    public $currentTrainingBatch = null;
 
     public function updatedTrainingBatchTrainerId()
     {
@@ -60,6 +63,7 @@ class CreateTrainingBatchLivewire extends Component
         }
 
         $this->trainerBatchList = TrainingBatch::where('training_batches.trainer_id', $this->trainingBatchTrainerId)
+            ->when($this->editingBatchId, fn($q) => $q->where('training_batches.id', '!=', $this->editingBatchId))
             ->select([
                 'training_courses.course_name',
                 'training_batches.id',
@@ -74,7 +78,7 @@ class CreateTrainingBatchLivewire extends Component
             ])
             ->join('training_courses', 'training_batches.training_course_id', '=', 'training_courses.id')
             ->join('training_schedule_items', 'training_batches.training_schedule_item_id', '=', 'training_schedule_items.id')
-            ->where('training_batches.status', 'open')
+            ->whereIn('training_batches.status', ['open', 'full', 'ongoing'])
             ->get()
             ->toArray();
     }
@@ -146,46 +150,85 @@ class CreateTrainingBatchLivewire extends Component
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Save
-    // ─────────────────────────────────────────────────────────────
-
-    public function saveTrainingBatch()
+    public function updateTrainingBatch()
     {
         if (!empty($this->conflictingBatchIds)) {
             session()->flash('error', 'The selected trainer has a conflicting schedule. Please resolve before saving.');
             return;
         }
 
+        dd($this->editingBatchId);
+
         $this->validate([
-            'trainingBatchCourseId'         => 'required|exists:training_courses,id',
-            'batchCode'                     => 'required|unique:training_batches,batch_code',
-            'batchName'                     => 'required|string|max:255',
-            'startDate'                     => 'required|date|before_or_equal:endDate',
-            'endDate'                       => 'required|date|after_or_equal:startDate',
-            'maxParticipants'               => 'required|integer|min:1',
-            'batchStatus'                   => 'required|in:open,closed,completed',
-            'trainingBatchScheduleId'       => 'required|exists:training_schedule_items,id',
-            'trainingBatchTrainerId'        => 'required|exists:users,id',
-            'notes'                         => 'nullable|string',
+            'trainingBatchCourseId'     => 'required|exists:training_courses,id',
+            'batchCode'                 => 'required|unique:training_batches,batch_code,' . $this->editingBatchId,
+            'batchName'                 => 'required|string|max:255',
+            'startDate'                 => 'required|date|before_or_equal:endDate',
+            'endDate'                   => 'required|date|after_or_equal:startDate',
+            'maxParticipants'           => 'required|integer|min:1',
+            'batchStatus'               => 'required|in:open,closed,completed',
+            'trainingBatchScheduleId'   => 'required|exists:training_schedule_items,id',
+            'trainingBatchTrainerId'    => 'required|exists:users,id',
+            'notes'                     => 'nullable|string',
         ]);
 
         $data = [
-            'training_course_id'            => $this->trainingBatchCourseId,
-            'batch_code'                    => $this->batchCode,
-            'batch_name'                    => $this->batchName,
-            'start_date'                    => $this->startDate,
-            'end_date'                      => $this->endDate,
-            'max_participants'              => $this->maxParticipants,
-            'status'                        => $this->batchStatus,
-            'training_schedule_item_id'     => $this->trainingBatchScheduleId,
-            'trainer_id'                    => $this->trainingBatchTrainerId,
-            'notes'                         => $this->notes,
-            'center_id'                     => auth()->user()->center_id,
+            'training_course_id'        => $this->trainingBatchCourseId,
+            'batch_code'                => $this->batchCode,
+            'batch_name'                => $this->batchName,
+            'start_date'                => $this->startDate,
+            'end_date'                  => $this->endDate,
+            'max_participants'          => $this->maxParticipants,
+            'status'                    => $this->batchStatus,
+            'training_schedule_item_id' => $this->trainingBatchScheduleId,
+            'trainer_id'                => $this->trainingBatchTrainerId,
+            'notes'                     => $this->notes,
+            'center_id'                 => auth()->user()->center_id,
         ];
 
-        TrainingBatch::create($data);
-        return redirect()->route('training_batches.index')->with('success', 'Training batch created successfully.');
+        TrainingBatch::find($this->editingBatchId)->update($data);
+
+        return redirect()->route('training_batches.index')->with('success', 'Training batch updated successfully.');
+    }
+
+    public function deleteTrainingBatch()
+    {
+        $trainingBatches = TrainingBatch::query()
+            ->select(
+                DB::raw('COUNT(training_batch_students.id) as registered_students_count')
+            )
+            ->leftJoin('training_batch_students', 'training_batches.id', '=', 'training_batch_students.training_batch_id')
+            ->where('training_batches.id', $this->editingBatchId)
+            ->groupBy('training_batches.id')
+            ->first();
+
+        if ($trainingBatches->registered_students_count > 0) {
+            return redirect()->back()->with('error', 'Cannot delete batch with registered students.');
+        }
+
+        TrainingBatch::where('id', $this->editingBatchId)->delete();
+        return redirect()->route('training_batches.index')->with('success', 'Training batch deleted successfully.');
+    }
+
+    public function mount($uuid)
+    {
+        $this->currentTrainingBatch = TrainingBatch::where('uuid', $uuid)->first();
+        if ($this->currentTrainingBatch) {
+            $this->trainingBatchCourseId         = $this->currentTrainingBatch->training_course_id;
+            $this->batchCode                     = $this->currentTrainingBatch->batch_code;
+            $this->batchName                     = $this->currentTrainingBatch->batch_name;
+            $this->startDate                     = date('Y-m-d', strtotime($this->currentTrainingBatch->start_date));
+            $this->endDate                       = date('Y-m-d', strtotime($this->currentTrainingBatch->end_date));
+            $this->maxParticipants               = $this->currentTrainingBatch->max_participants;
+            $this->batchStatus                   = $this->currentTrainingBatch->status;
+            $this->trainingBatchScheduleId       = $this->currentTrainingBatch->training_schedule_item_id;
+            $this->trainingBatchTrainerId        = $this->currentTrainingBatch->trainer_id;
+            $this->notes                         = $this->currentTrainingBatch->notes;
+            $this->editingBatchId                = $this->currentTrainingBatch->id;
+
+            $this->loadTrainerBatches();
+        }
+        // dd($currentTrainingBatch->toArray());
     }
 
     public function render()
@@ -202,7 +245,7 @@ class CreateTrainingBatchLivewire extends Component
 
         $centers = Center::all();
 
-        return view('livewire.course-administration.create-training-batch-livewire', [
+        return view('livewire.course-administration.update-training-batch-livewire', [
             'trainingCourses'      => $trainingCourses,
             'trainigScheduleItems' => $trainigScheduleItems,
             'trainers'             => $trainers,

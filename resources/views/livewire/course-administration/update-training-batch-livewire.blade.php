@@ -5,10 +5,10 @@
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 bg-blue-50 dark:bg-gray-600">
                 <div>
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Register Training Batch
+                        Update Training Batch
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        Fill the details of the training batch
+                        Update the details of the training batch
                     </p>
                 </div>
             </div>
@@ -304,9 +304,15 @@
             {{-- Form Actions --}}
             <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600 gap-3">
                 <button
-                    wire:click="saveTrainingBatch"
+                    wire:click="updateTrainingBatch"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Update Training Batch
+                </button>
+
+                <button
+                    wire:click="deleteTrainingBatch" wire:confirm='Are you sure you want to delete this training batch?'
+                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-blue-800">
+                    Delete Training Batch
                 </button>
 
                 <a href="{{ route('training_batches.index') }}"
