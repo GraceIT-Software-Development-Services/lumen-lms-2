@@ -204,7 +204,7 @@
                     @else
 
                     <!-- Dashboard -->
-                    @if (auth()->user()->hasRole('Center Admin') || auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Center Admin') || auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Director'))
                     <li>
                         <a href="{{ route('dashboard.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -217,7 +217,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Director') || auth()->user()->hasRole('Center Admin'))
                     <li>
                         <a href="{{ route('learner-applications-list.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -270,7 +270,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin'))
+                    @if (auth()->user()->hasRole('Director'))
                     <li>
                         <a href="{{ route('centers.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -366,7 +366,7 @@
                     </li>
                     @endif
 
-                    @if (auth()->user()->hasRole('Business Admin') || auth()->user()->hasRole('Super Admin'))
+                    @if (auth()->user()->hasRole('Director') || auth()->user()->hasRole('Super Admin'))
                     <li>
                         <a href="{{ route('users.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">
@@ -381,27 +381,6 @@
 
                     @endif
 
-                </ul>
-            </div>
-
-            <!-- Bottom Section - Fixed -->
-            <div class="px-4 py-3 mt-auto border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                <ul class="space-y-1 font-medium">
-                    <!-- Logout -->
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit"
-                                class="flex items-center w-full p-2 text-gray-900 rounded-lg dark:text-white hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transform hover:scale-[1.01] transition-all">
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                                </svg>
-                                <span class="ml-3 text-sm">Logout</span>
-                            </button>
-                        </form>
-                    </li>
                 </ul>
             </div>
         </div>

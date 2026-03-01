@@ -28,23 +28,7 @@ class TrainingBatchController extends Controller
      */
     public function create()
     {
-        // Fetch related training courses for display
-        $trainingCourses = TrainingCourse::query()
-            ->join('training_center_courses', 'training_courses.id', '=', 'training_center_courses.training_course_id')
-            ->where('training_center_courses.center_id', auth()->user()->center_id)
-            ->select('training_courses.*')
-            ->get();
-        // Fetch related training schedule items for display
-        $trainigScheduleItems = TrainingScheduleItem::where('center_id', auth()->user()->center_id)->get();
-        // Fetch trainers for selection
-        $trainers = User::role(['Trainer'])
-            ->where('center_id', auth()->user()->center_id)
-            ->orderBy('name', 'asc')
-            ->get();
-
-        $centers = Center::all();
-
-        return view('courseadministration.training_batches.create', compact('trainingCourses', 'trainers', 'trainigScheduleItems', 'centers'));
+        return view('courseadministration.training_batches.create');
     }
 
     /**
@@ -76,20 +60,7 @@ class TrainingBatchController extends Controller
      */
     public function show($uuid)
     {
-        // dd('show function called in TrainingBatchController');
-        // Display the specified training batch
-        $trainingBatch = TrainingBatch::where('uuid', $uuid)->firstOrFail();
-        // Fetch related training courses for display
-        $trainingCourses = TrainingCourse::all();
-        // Fetch related training schedule items for display
-        $trainigScheduleItems = TrainingScheduleItem::all();
-        $currentTrainingScheduleItems = TrainingScheduleItem::where('id', $trainingBatch->training_schedule_item_id)->first();
-        // Fetch trainers for selection
-        $trainers = User::role(['Trainer'])
-            ->orderBy('name', 'asc')
-            ->get();
-        // Return the view with the training batch data
-        return view('courseadministration.training_batches.view', compact('trainingBatch', 'trainingCourses', 'trainers', 'trainigScheduleItems', 'currentTrainingScheduleItems'));
+        return view('courseadministration.training_batches.view', compact('uuid'));
     }
 
     /**

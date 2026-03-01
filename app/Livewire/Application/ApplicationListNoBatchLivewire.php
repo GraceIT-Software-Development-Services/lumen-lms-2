@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Application;
 
+use App\Mail\BatchNotificationEmail;
 use App\Models\User;
 use Exception;
 use FPDF;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Modules\CourseAdministration\Models\LearnerTrainingApplication;
 use Modules\CourseAdministration\Models\TrainingBatch;
@@ -224,7 +226,15 @@ class ApplicationListNoBatchLivewire extends Component
                 ->where('user_id', $application->user_id)
                 ->exists();
 
-            User::where('id', $application->user_id)->update(['is_confirmed' => 1]);
+            $user = User::find($application->user_id);
+
+            if ($user) {
+                $user->update(['is_confirmed' => 1]);
+
+                if ($user->email) {
+                    // Mail::to($user->email)->later(now()->addMinutes(1), new BatchNotificationEmail($user));
+                }
+            }
 
             if (!$alreadyEnrolled) {
                 $trainingBatchStudentRepository->create([

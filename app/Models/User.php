@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Modules\Institution\Models\Center;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -148,5 +149,11 @@ class User extends Authenticatable implements MustVerifyEmail
                     ($user->last_name ?? '')
             );
         });
+    }
+
+    public function centers()
+    {
+        return $this->belongsToMany(Center::class, 'trainer_centers', 'trainer_id', 'center_id')
+            ->withTimestamps();
     }
 }
