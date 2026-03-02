@@ -145,7 +145,8 @@
 
                             @if ($picture)
                             <div class="mt-2">
-                                <img src="{{ $picture->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg">
+                                <img src="{{ Storage::disk('s3')->temporaryUrl($picture, now()->addMinutes(5)) }}"
+                                    class="h-20 w-20 object-cover rounded-lg">
                             </div>
                             @elseif($currentPicturePath)
                             <p class="mt-1 text-sm text-gray-500">Current picture: {{ basename($currentPicturePath) }}</p>

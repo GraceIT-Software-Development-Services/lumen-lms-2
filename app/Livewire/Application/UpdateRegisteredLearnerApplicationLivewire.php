@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateLearnerRequest;
 use App\Http\Requests\UpdateRegisterLearnerApplicationRequest;
 use App\Models\User;
 use App\Models\UserDocument;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -121,7 +122,7 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
 
         // Profile
         $this->uli                      = $this->learner->uli;
-        $this->currentPicturePath       = $this->learner->picture_path;
+        $this->picture                  = $this->learner->picture_path;
 
         // JSON fields
         // JSON fields
@@ -244,12 +245,26 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
             (new UpdateLearnerRequest())->messages(),
         );
 
+        // Handle picture upload
+        if ($this->picture) {
+            // Delete old picture from S3 if exists
+            if ($this->currentPicturePath) {
+                Storage::disk('s3')->delete($this->currentPicturePath);
+            }
+
+            // Store new picture to S3
+            $picturePath = $this->picture->store('profile-pictures', 's3');
+        } else {
+            $picturePath = $this->currentPicturePath ?? null;
+        }
+
         $data = [
             'uli'                           => $validated['uli'] ?? null,
             'name'                          => $validated['firstName'],
             'middle_name'                   => $validated['middleName'] ?? null,
             'last_name'                     => $validated['lastName'],
             'extension'                     => $validated['suffix'] ?? null,
+            'picture_path'                  => $picturePath ?? null,
             'email'                         => $validated['contactEmail'], // login email updated
             'school_name'                   => $validated['schoolName'] ?? null,
             'school_address'                => $validated['schoolAddress'] ?? null,

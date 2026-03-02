@@ -257,7 +257,7 @@
                     @endif
 
                     <!-- Activity -->
-                    @if (auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Center Admin'))
+                    @if (auth()->user()->hasRole('Trainer'))
                     <li>
                         <a href="{{ route('training_student_activities.index') }}"
                             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-indigo-200 dark:hover:bg-gray-700 transform hover:scale-[1.01] transition-all">

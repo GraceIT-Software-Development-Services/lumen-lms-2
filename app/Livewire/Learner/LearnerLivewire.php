@@ -62,7 +62,9 @@ class LearnerLivewire extends Component
     public $competency_assessment = [];
 
     public $documents = [];
+    public $existingDocumentIds = [];
 
+    public bool $agreedToTerms = false;
 
 
     public function mount(User $learner)
@@ -117,7 +119,11 @@ class LearnerLivewire extends Component
         $this->competency_assessment = $this->learner->competency_assessment ? json_decode($this->learner->competency_assessment, true) : [];
 
         // Load documents separately
-        $this->documents = UserDocument::where('user_id', $this->learner->id)->get()->toArray();
+        $userDocuments = UserDocument::where('user_id', $this->learner->id)->get();
+        $this->documents = $userDocuments->toArray();
+        $this->existingDocumentIds = $userDocuments->pluck('id')->toArray();
+
+        $this->agreedToTerms = $this->learner->agreed_to_terms;
     }
 
     protected function initializeEmptyArrays()
@@ -140,6 +146,22 @@ class LearnerLivewire extends Component
 
     public function removeDocument($index)
     {
+        $document = $this->documents[$index];
+
+        // If it has an ID, it's an existing DB record — delete file from S3 and DB
+        if (!empty($document['id'])) {
+            $userDocument = UserDocument::find($document['id']);
+
+            if ($userDocument) {
+                // Delete file from S3 if it exists
+                if ($userDocument->file && Storage::disk('s3')->exists($userDocument->file)) {
+                    Storage::disk('s3')->delete($userDocument->file);
+                }
+
+                $userDocument->delete();
+            }
+        }
+
         unset($this->documents[$index]);
         $this->documents = array_values($this->documents);
     }
@@ -278,6 +300,8 @@ class LearnerLivewire extends Component
                 'competency_assessment.*.certificate_number' => 'nullable|string|max:255',
                 'competency_assessment.*.date_issued' => 'nullable|string|max:255',
                 'competency_assessment.*.expiry_date' => 'nullable|string|max:255',
+
+                'agreedToTerms' => 'accepted',
             ], $documentRules), [
                 'picture.image' => 'The file must be an image.',
                 'picture.max' => 'The picture size must not exceed 2MB.',
@@ -369,6 +393,8 @@ class LearnerLivewire extends Component
                 'documents.*.file.file' => 'The document must be a valid file.',
                 'documents.*.file.mimes' => 'The document must be a file of type: jpg, jpeg, png, pdf.',
                 'documents.*.file.max' => 'The document must not exceed 10MB.',
+
+                'agreedToTerms.accepted' => 'You must agree to the certification statement before submitting.',
             ]);
 
             $data = [
@@ -407,6 +433,8 @@ class LearnerLivewire extends Component
                 'trainings' => !empty($this->trainings) ? json_encode($this->trainings) : null,
                 'licensure_examination' => !empty($this->licensure_examination) ? json_encode($this->licensure_examination) : null,
                 'competency_assessment' => !empty($this->competency_assessment) ? json_encode($this->competency_assessment) : null,
+
+                'agreed_to_terms' => $this->agreedToTerms,
             ];
 
             // Handle picture upload

@@ -35,6 +35,8 @@ Route::get('/', [PageController::class, 'index'])->name('landing');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
+    Route::get('/data-privacy', [PageController::class, 'dataPrivacy'])->name('data.privacy');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // Institution Module Routes

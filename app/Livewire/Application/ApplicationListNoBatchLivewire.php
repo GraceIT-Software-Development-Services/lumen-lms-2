@@ -12,7 +12,9 @@ use Modules\CourseAdministration\Models\LearnerTrainingApplication;
 use Modules\CourseAdministration\Models\TrainingBatch;
 use Modules\CourseAdministration\Models\TrainingBatchStudent;
 use Modules\CourseAdministration\Models\TrainingCourse;
+use Modules\CourseAdministration\Models\TrainingScheduleItem;
 use Modules\CourseAdministration\Repositories\TrainingBatchStudentRepository;
+use Modules\Institution\Models\Center;
 
 class ApplicationListNoBatchLivewire extends Component
 {
@@ -210,16 +212,13 @@ class ApplicationListNoBatchLivewire extends Component
 
         // Update all selected applications with the batch
         LearnerTrainingApplication::whereIn('id', $this->selectedIds)
-            ->update(
-                [
-                    'training_batch_id' => $this->trainingBatchId,
-                    'status' => 'approved',
-                ]
-            );
+            ->update([
+                'training_batch_id' => $this->trainingBatchId,
+                'status' => 'approved',
+            ]);
 
         $trainingBatchStudentRepository = new TrainingBatchStudentRepository();
 
-        // Each selected application may belong to a different learner, so loop through them
         foreach ($selectedApplications as $application) {
             // Check if learner is already enrolled in this batch to avoid duplicates
             $alreadyEnrolled = TrainingBatchStudent::where('training_batch_id', $this->trainingBatchId)
@@ -231,8 +230,25 @@ class ApplicationListNoBatchLivewire extends Component
             if ($user) {
                 $user->update(['is_confirmed' => 1]);
 
+                $batchDetails   = TrainingBatch::where('id', $this->trainingBatchId)->first();
+                $courseDetails  = TrainingCourse::where('id', $application->training_course_id)->first();
+                $centerDetails  = Center::where('id', $application->center_id)->first();
+                $scheduleDetails = $batchDetails
+                    ? TrainingScheduleItem::where('id', $batchDetails->training_schedule_item_id)->first()
+                    : null;
+
+
+
                 if ($user->email) {
-                    // Mail::to($user->email)->later(now()->addMinutes(1), new BatchNotificationEmail($user));
+                    $data = [
+                        'user'     => $user,
+                        'batch'    => $batchDetails,
+                        'course'   => $courseDetails,
+                        'center'   => $centerDetails,
+                        'schedule' => $scheduleDetails,
+                    ];
+
+                    Mail::to($user->email)->queue(new BatchNotificationEmail($data));
                 }
             }
 
@@ -248,16 +264,13 @@ class ApplicationListNoBatchLivewire extends Component
 
         // Reset state
         $this->openAssignBatchModal = false;
-
-        $this->selectedIds = [];
-
-        $this->trainingBatchId = null;
-        $this->trainingCourseId = null;
-        $this->trainingCenterId = null;
-
-        $this->trainingCourses = [];
-        $this->trainingBatches = [];
-        $this->trainingCenters = [];
+        $this->selectedIds          = [];
+        $this->trainingBatchId      = null;
+        $this->trainingCourseId     = null;
+        $this->trainingCenterId     = null;
+        $this->trainingCourses      = [];
+        $this->trainingBatches      = [];
+        $this->trainingCenters      = [];
 
         session()->flash('success', 'Batch assigned successfully to the selected applications.');
     }

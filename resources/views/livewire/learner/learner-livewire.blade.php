@@ -14,7 +14,15 @@
 
                 @if($isEditMode)
                 <div class="flex flex-col items-end">
-                    <span class="text-xl text-red-600 font-bold dark:text-gray-400 tracking-wide">Unique Learner Identifier (ULI): {{ strtoupper($uli) }}</span>
+                    <div class="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">
+                        <svg class="w-3.5 h-3.5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        <div>
+                            <p class="text-[10px] font-semibold text-red-400 uppercase tracking-wider leading-none mb-0.5">Unique Learner Identifier</p>
+                            <p class="text-sm font-bold text-red-700 font-mono tracking-widest">{{ strtoupper($uli) }}</p>
+                        </div>
+                    </div>
                 </div>
                 @endif
             </div>
@@ -336,9 +344,13 @@
                         <div class="p-4 border border-gray-300 rounded-lg bg-gray-50" wire:key="document-{{ $index }}">
                             <div class="flex justify-between items-center mb-3">
                                 <h4 class="font-medium text-gray-900">Document #{{ $index + 1 }}</h4>
-                                <button type="button" wire:click="removeDocument({{ $index }})" class="text-red-600 hover:text-red-800"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <button
+                                    wire:click="removeDocument({{ $index }})"
+                                    wire:confirm="Are you sure you want to remove this document? This will permanently delete the file and cannot be undone."
+                                    class="text-red-600 hover:text-red-800"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg></button>
+                                    </svg>
+                                </button>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <select wire:model.live="documents.{{ $index }}.type" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
@@ -370,11 +382,50 @@
                     </div>
                 </div>
 
-
+                {{-- Terms and Conditions --}}
+                <div class="p-4 md:p-5 border-b border-gray-200">
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-1">Certification & Agreement</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed mb-4">
+                                    I hereby certify that the information provided above is true and correct to the best of my knowledge.
+                                    I understand that any false statement or misrepresentation may result in the revocation of my TESDA
+                                    accreditation or disqualification from training and assessment activities.
+                                </p>
+                                <label class="flex items-start gap-3 cursor-pointer group">
+                                    <div class="relative flex-shrink-0 mt-0.5">
+                                        <input
+                                            type="checkbox"
+                                            wire:model="agreedToTerms"
+                                            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 cursor-pointer">
+                                    </div>
+                                    <span class="text-xs text-gray-600 group-hover:text-gray-800 transition-colors leading-relaxed">
+                                        I have read, understood, and agree to the above certification statement and <a href="{{ route('data.privacy' ) }}" class="text-blue-500 underline">data privacy</a>
+                                        <span class="text-red-500 ml-0.5">*</span>
+                                    </span>
+                                </label>
+                                @error('agreedToTerms')
+                                <p class="mt-2 text-xs text-red-600 flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- Form Actions --}}
                 <div class="flex flex-wrap items-center gap-3 p-4 md:p-5 border-t border-gray-200 rounded-b">
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">{{ $isEditMode ? 'Update Learner' : 'Register Learner' }}</button>
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">{{ $isEditMode ? 'Update Student Profile Details' : 'Register Learner' }}</button>
                     @if($isEditMode)
                     <!-- <button type="button" onclick="confirm('Are you sure you want to delete this learner? This action cannot be undone.') || event.stopImmediatePropagation()" wire:click="deleteLearner" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5">Delete Learner</button> -->
                     @endif

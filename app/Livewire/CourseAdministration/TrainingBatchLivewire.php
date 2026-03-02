@@ -24,9 +24,14 @@ class TrainingBatchLivewire extends Component
                 'training_batches.end_date',
                 'training_batches.status',
                 'training_batches.max_participants',
-                DB::raw('COUNT(training_batch_students.id) as registered_students_count')
+                DB::raw('COUNT(training_batch_students.id) as registered_students_count'),
+                DB::raw('CONCAT(centers.code, " - ", centers.name) AS center_name'),
+                // Fullname of user concat
+                'users.full_name_searchable as trainer_name'
             )
             ->join('training_courses', 'training_batches.training_course_id', '=', 'training_courses.id')
+            ->join('users', 'users.id', '=', 'training_batches.trainer_id')
+            ->join('centers', 'centers.id', '=', 'users.center_id')
             ->leftJoin('training_batch_students', 'training_batches.id', '=', 'training_batch_students.training_batch_id')
             ->where(function ($query) {
                 $query->where('training_batches.batch_code', 'like', '%' . $this->search . '%')
