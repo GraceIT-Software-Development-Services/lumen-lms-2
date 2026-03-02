@@ -56,50 +56,98 @@
             <table class="w-full text-sm text-left">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50">
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Schedule Days</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Start Time</th>
-                        <th class="px-5 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">End Time</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">#</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Name</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Description</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Schedule Days</th>
+                        <th class="px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Time</th>
                         <th class="px-5 py-3"></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     @forelse ($scheduleItems as $scheduleItem)
-                    <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
-                        <td class="px-5 py-3.5 text-gray-400 font-medium">
-                            {{ $loop->iteration }}
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+
+                        {{-- # --}}
+                        <td class="px-5 py-4 text-xs font-mono text-gray-400">
+                            {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
                         </td>
-                        <td class="px-5 py-3.5 text-gray-800 font-semibold">
-                            {{ $scheduleItem->name }}
+
+                        {{-- Name --}}
+                        <td class="px-5 py-4">
+                            <div class="font-semibold text-gray-800 text-sm">{{ $scheduleItem->name }}</div>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">
-                            {{ $scheduleItem->description }}
+
+                        {{-- Description --}}
+                        <td class="px-5 py-4 max-w-xs">
+                            <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                                {{ $scheduleItem->description ?? '—' }}
+                            </p>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">
-                            {{ implode(', ', $scheduleItem->schedule_days ?? []) }}
+
+                        {{-- Schedule Days --}}
+                        <td class="px-5 py-4">
+                            <div class="flex flex-wrap gap-1">
+                                @foreach ($scheduleItem->schedule_days ?? [] as $day)
+                                @php
+                                $short = strtoupper(substr($day, 0, 3));
+                                $colors = [
+                                'MON' => 'bg-blue-50 text-blue-600',
+                                'TUE' => 'bg-violet-50 text-violet-600',
+                                'WED' => 'bg-green-50 text-green-600',
+                                'THU' => 'bg-amber-50 text-amber-600',
+                                'FRI' => 'bg-rose-50 text-rose-600',
+                                'SAT' => 'bg-orange-50 text-orange-600',
+                                'SUN' => 'bg-gray-100 text-gray-500',
+                                ];
+                                $color = $colors[$short] ?? 'bg-gray-100 text-gray-500';
+                                @endphp
+                                <span class="inline-block text-xs font-semibold font-mono px-2 py-0.5 rounded {{ $color }}">
+                                    {{ $short }}
+                                </span>
+                                @endforeach
+                            </div>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-500 font-mono text-xs">
-                            {{ date('g:i A', strtotime($scheduleItem->start_time)) }}
+
+                        {{-- Time --}}
+                        <td class="px-5 py-4">
+                            <div class="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-lg px-2.5 py-1.5">
+                                <svg class="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path stroke-linecap="round" d="M12 6v6l4 2" />
+                                </svg>
+                                <span class="text-xs font-mono text-gray-600">
+                                    {{ date('g:i A', strtotime($scheduleItem->start_time)) }}
+                                </span>
+                                <span class="text-xs text-gray-300">→</span>
+                                <span class="text-xs font-mono text-gray-600">
+                                    {{ date('g:i A', strtotime($scheduleItem->end_time)) }}
+                                </span>
+                            </div>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-500 font-mono text-xs">
-                            {{ date('g:i A', strtotime($scheduleItem->end_time)) }}
-                        </td>
-                        <td class="px-5 py-3.5 text-right">
+
+                        {{-- Action --}}
+                        <td class="px-5 py-4 text-right">
                             <a href="{{ route('training_schedule_items.show', $scheduleItem->uuid) }}"
-                                class="text-indigo-500 hover:text-indigo-700 font-medium text-sm transition">
-                                View →
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 border border-green-100 bg-green-50 hover:bg-green-100 hover:border-green-300 px-3 py-1.5 rounded-lg transition-colors duration-150">
+                                View
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
                             </a>
                         </td>
+
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-5 py-4 text-center">
-                            <svg class="mx-auto w-10 h-10 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-400">No training schedule items found</p>
+                        <td colspan="6" class="px-5 py-16 text-center">
+                            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-400">No schedule items found</p>
+                            <p class="text-xs text-gray-300 mt-1">Add a schedule to get started</p>
                         </td>
                     </tr>
                     @endforelse

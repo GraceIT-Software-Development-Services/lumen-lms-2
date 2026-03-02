@@ -21,6 +21,28 @@
             @endif
 
             <form wire:submit.prevent="save">
+
+                <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Unique Learner Identifier</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {{-- Uli --}}
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900">
+                                Unique Learner Identifier <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                wire:model="uli"
+                                class="bg-gray-50 border @error('uli') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                placeholder="Enter ULI" autocomplete="off">
+                            @error('uli')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Basic Information --}}
 
                 <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
@@ -36,7 +58,7 @@
                                 type="text"
                                 wire:model="firstName"
                                 class="bg-gray-50 border @error('firstName') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Enter first name">
+                                placeholder="Enter first name" autocomplete="off">
                             @error('firstName')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -51,7 +73,7 @@
                                 type="text"
                                 wire:model="middleName"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Enter middle name">
+                                placeholder="Enter middle name" autocomplete="off">
                             @error('middleName')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -66,7 +88,7 @@
                                 type="text"
                                 wire:model="lastName"
                                 class="bg-gray-50 border @error('lastName') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                placeholder="Enter last name">
+                                placeholder="Enter last name" autocomplete="off">
                             @error('lastName')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -82,7 +104,7 @@
                                 wire:model="suffix"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                 placeholder="Jr., Sr., III, etc."
-                                maxlength="10">
+                                maxlength="10" autocomplete="off">
                             @error('suffix')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -144,13 +166,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="schoolName" class="block mb-2 text-sm font-medium text-gray-900">School Name</label>
-                            <input type="text" id="schoolName" wire:model="schoolName" class="bg-gray-50 border @error('schoolName') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. XYZ Technical School">
+                            <input type="text" id="schoolName" wire:model="schoolName" class="bg-gray-50 border @error('schoolName') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. XYZ Technical School" autocomplete="off">
                             @error('schoolName')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         <div>
                             <label for="schoolAddress" class="block mb-2 text-sm font-medium text-gray-900">School Address</label>
-                            <textarea id="schoolAddress" wire:model="schoolAddress" rows="1" class="bg-gray-50 border @error('schoolAddress') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Complete school address"></textarea>
+                            <textarea id="schoolAddress" wire:model="schoolAddress" rows="1" class="bg-gray-50 border @error('schoolAddress') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Complete school address" autocomplete="off"></textarea>
                             @error('schoolAddress')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                     </div>
@@ -209,17 +231,17 @@
 
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">Place of Birth</label>
-                            <input type="text" wire:model="birthPlace" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="City/Municipality, Province">
+                            <input type="text" wire:model="birthPlace" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="City/Municipality, Province" autocomplete="off">
                         </div>
 
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">Mother's Name</label>
-                            <input type="text" wire:model="motherName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Full name">
+                            <input type="text" wire:model="motherName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Full name" autocomplete="off">
                         </div>
 
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900">Father's Name</label>
-                            <input type="text" wire:model="fatherName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Full name">
+                            <input type="text" wire:model="fatherName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Full name" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -230,25 +252,25 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-3">
                             <label class="block mb-2 text-sm font-medium text-gray-900">House/Block/Lot No., Street</label>
-                            <input type="text" wire:model="addressNumberStreet" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. Block 5 Lot 12, Main Street">
+                            <input type="text" wire:model="addressNumberStreet" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. Block 5 Lot 12, Main Street" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Barangay</label><input type="text" wire:model="addressBarangay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Barangay name">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Barangay</label><input type="text" wire:model="addressBarangay" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Barangay name" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">District</label><input type="text" wire:model="addressDistrict" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="District">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">District</label><input type="text" wire:model="addressDistrict" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="District" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">City/Municipality</label><input type="text" wire:model="addressCity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="City">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">City/Municipality</label><input type="text" wire:model="addressCity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="City" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Province</label><input type="text" wire:model="addressProvince" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Province">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Province</label><input type="text" wire:model="addressProvince" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Province" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Region</label><input type="text" wire:model="addressRegion" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Region">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Region</label><input type="text" wire:model="addressRegion" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Region" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">ZIP Code</label><input type="text" wire:model="addressZipCode" maxlength="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="ZIP Code">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">ZIP Code</label><input type="text" wire:model="addressZipCode" maxlength="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="ZIP Code" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -261,22 +283,26 @@
                             <label class="block mb-2 text-sm font-medium text-gray-900">
                                 Mobile Number <span class="text-red-500">*</span>
                             </label>
-                            <input type="tel" wire:model="contactMobile" class="bg-gray-50 border @error('contactMobile') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. +639123456789">
+                            <input type="tel" wire:model="contactMobile" class="bg-gray-50 border @error('contactMobile') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. +639123456789" autocomplete="off">
                             @error('contactMobile')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Telephone</label><input type="tel" wire:model="contactTel" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. (02) 1234-5678">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Telephone</label><input type="tel" wire:model="contactTel" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="e.g. (02) 1234-5678" autocomplete="off">
                         </div>
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Email Address</label><input type="email" wire:model="contactEmail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="email@example.com">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Email Address</label><input type="email" wire:model="contactEmail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="email@example.com" autocomplete="off">
+                            @error('contactEmail')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+
                         <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Fax Number</label><input type="tel" wire:model="contactFax" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Fax number">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Fax Number</label><input type="tel" wire:model="contactFax" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Fax number" autocomplete="off">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Other Contact Information</label><input type="text" wire:model="contactOthers" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Other contact details">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Other Contact Information</label><input type="text" wire:model="contactOthers" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Other contact details" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -299,6 +325,9 @@
                         </div>
                         <div><label class="block mb-2 text-sm font-medium text-gray-900">If Others, Please Specify</label><input type="text" wire:model="educationalAttainmentOthers" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Specify other educational attainment"></div>
                     </div>
+                    @error('contactMobile')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Employment Information --}}
@@ -316,6 +345,9 @@
                             <option value="ofw">OFW</option>
                         </select>
                     </div>
+                    @error('contactMobile')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Work Experiences --}}
@@ -431,6 +463,51 @@
                     </div>
                 </div>
 
+                {{-- User Documents --}}
+                <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">Documents</h2>
+                        <button type="button" wire:click="addDocument" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Document</button>
+                    </div>
+                    <div class="space-y-3">
+                        @forelse($documents as $index => $document)
+                        <div class="p-4 border border-gray-300 rounded-lg bg-gray-50" wire:key="document-{{ $index }}">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-gray-900">Document #{{ $index + 1 }}</h4>
+                                <button type="button" wire:click="removeDocument({{ $index }})" class="text-red-600 hover:text-red-800"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg></button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <select wire:model.live="documents.{{ $index }}.type" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    <option value="">Select document type</option>
+                                    @foreach(\App\Enums\DocumentTypeEnum::cases() as $type)
+                                    <option value="{{ $type->value }}">{{ str_replace('_', ' ', $type->name) }}</option>
+                                    @endforeach
+                                </select>
+                                <input type="file"
+                                    id="picture"
+                                    wire:model="documents.{{ $index }}.file"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+
+                                @if(isset($document['file']) && is_string($document['file']))
+                                <div class="mt-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                                    </svg>
+                                    <a href="{{ Storage::disk('s3')->temporaryUrl($document['file'], now()->addMinute(1)) }}" target="_blank" class="text-sm text-blue-600 hover:underline truncate">
+                                        {{ basename($document['file']) }}
+                                    </a>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-sm text-gray-500 text-center py-4">No documents added yet.</p>
+                        @endforelse
+                    </div>
+                </div>
+
                 <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Training Course and Batch Assignment</h2>
 
@@ -498,6 +575,48 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Terms and Conditions --}}
+                <div class="p-4 md:p-5 border-b border-gray-200">
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-1">Certification & Agreement</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed mb-4">
+                                    I hereby certify that the information provided above is true and correct to the best of my knowledge.
+                                    I understand that any false statement or misrepresentation may result in the revocation of my TESDA
+                                    accreditation or disqualification from training and assessment activities.
+                                </p>
+                                <label class="flex items-start gap-3 cursor-pointer group">
+                                    <div class="relative flex-shrink-0 mt-0.5">
+                                        <input
+                                            type="checkbox"
+                                            wire:model="agreedToTerms"
+                                            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 cursor-pointer">
+                                    </div>
+                                    <span class="text-xs text-gray-600 group-hover:text-gray-800 transition-colors leading-relaxed">
+                                        I have read, understood, and agree to the above certification statement and <a href="{{ route('data.privacy' ) }}" class="text-blue-500 underline">data privacy</a>
+                                        <span class="text-red-500 ml-0.5">*</span>
+                                    </span>
+                                </label>
+                                @error('agreedToTerms')
+                                <p class="mt-2 text-xs text-red-600 flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 {{-- Form Actions --}}
                 <div class="flex flex-wrap items-center gap-3 p-4 md:p-5 border-t border-gray-200 rounded-b">

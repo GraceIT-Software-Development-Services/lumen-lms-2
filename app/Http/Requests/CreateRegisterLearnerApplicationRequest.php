@@ -36,8 +36,9 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
                 'nullable',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')
+                'unique:users,email',
             ],
+
             'password' => [
                 'nullable',
                 'string',
@@ -147,6 +148,7 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
             'licensureExamination' => ['nullable', 'array', 'max:30'],
             // JSON Fields - Competency Assessment
             'competencyAssessment' => ['nullable', 'array', 'max:50'],
+            'agreedToTerms' => 'accepted',
         ];
     }
 
@@ -205,6 +207,8 @@ class CreateRegisterLearnerApplicationRequest extends FormRequest
             'licensureExamination.max' => 'You can add a maximum of 30 licensure examinations.',
             // Competency Assessment
             'competencyAssessment.max' => 'You can add a maximum of 50 competency assessments.',
+
+            'agreedToTerms.accepted' => 'You must agree to the certification statement before submitting.',
         ];
     }
 }
