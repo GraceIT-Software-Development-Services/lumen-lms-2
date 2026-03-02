@@ -85,6 +85,35 @@ class CardDashboardLivewire extends Component
             'monthlyData'         => $this->monthlyData,
             'totalApplications'   => $this->totalApplications,
             'peakMonth'           => $this->peakMonth,
+            'topCoursesData'      => $this->getTopCoursesDataProperty(),
         ]);
+    }
+
+    public function getTopCoursesDataProperty(): array
+    {
+        $data = LearnerTrainingApplication::selectRaw('
+                learner_training_applications.training_course_id,
+                training_courses.course_name,
+                training_courses.course_code,
+                COUNT(*) as total
+            ')
+            ->join('training_courses', 'training_courses.id', '=', 'learner_training_applications.training_course_id')
+            ->whereYear('learner_training_applications.application_date', $this->selectedYear)
+            ->groupBy('learner_training_applications.training_course_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get()
+            ->map(fn($item) => [
+                'name'  => $item->course_name ?? 'Unknown',
+                'code'  => $item->course_code ?? '',
+                'total' => $item->total,
+            ])
+            ->toArray();
+
+        return [
+            'labels' => array_column($data, 'code'),   // short code for x-axis
+            'names'  => array_column($data, 'name'),   // full name for tooltip
+            'series' => array_column($data, 'total'),
+        ];
     }
 }

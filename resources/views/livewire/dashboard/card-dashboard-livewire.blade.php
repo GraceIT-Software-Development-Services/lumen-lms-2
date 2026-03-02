@@ -122,7 +122,7 @@
 
     @if (auth()->user()->hasRole('Director'))
     {{-- Chart Card --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
 
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
@@ -166,6 +166,48 @@
             wire:ignore
             id="monthlyApplicationChart"
             style="min-height: 350px;"></div>
+    </div>
+
+
+    {{-- Most Applied Training Courses --}}
+    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div class="w-full">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Most Applied Training Courses</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">Top 1 courses by application count — {{ $selectedYear }}</p>
+                    </div>
+                </div>
+
+                {{-- Top course summary cards --}}
+                @if(count($topCoursesData['series']) > 0)
+
+                @foreach(array_slice(array_keys($topCoursesData['series']), 0, 3) as $i)
+                <div class="flex items-center gap-3 p-3 rounded-lg
+            {{ $i === 0 ? 'bg-yellow-50 border border-yellow-100' : ($i === 1 ? 'bg-gray-50 border border-gray-100' : 'bg-orange-50 border border-orange-100') }} mb-2">
+                    <div class="text-2xl font-black
+                {{ $i === 0 ? 'text-yellow-500' : ($i === 1 ? 'text-gray-400' : 'text-orange-400') }}">
+                        #{{ $i + 1 }}
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-gray-700 truncate">
+                            {{ $topCoursesData['names'][$i] ?? '' }}
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            {{ $topCoursesData['series'][$i] ?? 0 }} applications
+                        </p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            <div
+                wire:ignore
+                id="topCoursesChart">
+            </div>
+        </div>
     </div>
     @endif
 
