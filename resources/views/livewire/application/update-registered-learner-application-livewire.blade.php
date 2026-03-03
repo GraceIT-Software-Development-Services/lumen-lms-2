@@ -483,9 +483,13 @@
                         <div class="p-4 border border-gray-300 rounded-lg bg-gray-50" wire:key="document-{{ $index }}">
                             <div class="flex justify-between items-center mb-3">
                                 <h4 class="font-medium text-gray-900">Document #{{ $index + 1 }}</h4>
-                                <button type="button" wire:click="removeDocument({{ $index }})" class="text-red-600 hover:text-red-800"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <button type="button"
+                                    wire:click="removeDocument({{ $index }})"
+                                    wire:confirm="Are you sure you want to remove this document? This will permanently delete the file and cannot be undone."
+                                    class="text-red-600 hover:text-red-800"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg></button>
+                                    </svg>
+                                </button>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <select wire:model.live="documents.{{ $index }}.type" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">

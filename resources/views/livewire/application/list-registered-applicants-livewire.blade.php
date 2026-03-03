@@ -7,13 +7,21 @@
         <div class="flex items-center gap-3">
 
             <div class="relative">
-                <a href="{{ route('learner-training-applications.register.application') }}"
+                <!-- <a href="{{ route('learner-training-applications.register.application') }}"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-sm transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    New Student Application
+                </a> -->
+                <a href="{{ route('learner-applications.create') }}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-sm transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     New Student Application
                 </a>
+
             </div>
 
             <div class="relative">
