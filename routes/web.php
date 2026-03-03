@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use Modules\CourseAdministration\Http\Controllers\LearnerTrainingApplicationController;
+use Modules\CourseAdministration\Http\Controllers\RegisterLearnerApplicationController;
 use Modules\CourseAdministration\Http\Controllers\TrainingActivityController;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchController;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchScheduleItemController;
@@ -130,6 +131,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/users/change-password', [UserController::class, 'updatePassword'])->name('users-update-password.update');
 
 
+
+
     // Register new applications
 
     Route::get('learner-training-applications/application/for-confirmation', [LearnerTrainingApplicationController::class, 'listForConfirmationApplication'])->name('learner-training-applications.for.confirmation');
@@ -173,6 +176,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Learner Route
     Route::get('learner/profile', [LearnerController::class, 'index'])->name('learner.profile.index');
+    Route::get('/learners/{uuid}/edit', [LearnerController::class, 'show'])->name('learners.edit');
+    Route::put('/learners/{uuid}/update', [LearnerController::class, 'update'])->name('learners.update');
+
+
+
+
+
+    // Application Using Controller
+    Route::get('/learner-applications/create', [RegisterLearnerApplicationController::class, 'create'])->name('learner-applications.create');
+    Route::post('/learner-applications', [RegisterLearnerApplicationController::class, 'store'])->name('learner-applications.store');
+    Route::get('/learner-applications/centers', [RegisterLearnerApplicationController::class, 'getCenters'])->name('learner-applications.getCenters');
+    Route::get('/learner-applications/batches', [RegisterLearnerApplicationController::class, 'getBatches'])->name('learner-applications.getBatches');
 
 
 
