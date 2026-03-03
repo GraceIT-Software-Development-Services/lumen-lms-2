@@ -227,6 +227,22 @@ class UpdateRegisteredLearnerApplicationLivewire extends Component
 
     public function removeDocument($index)
     {
+        $document = $this->documents[$index];
+
+        // If it has an ID, it's an existing DB record — delete file from S3 and DB
+        if (!empty($document['id'])) {
+            $userDocument = UserDocument::find($document['id']);
+
+            if ($userDocument) {
+                // Delete file from S3 if it exists
+                if ($userDocument->file && Storage::disk('s3')->exists($userDocument->file)) {
+                    Storage::disk('s3')->delete($userDocument->file);
+                }
+
+                $userDocument->delete();
+            }
+        }
+
         unset($this->documents[$index]);
         $this->documents = array_values($this->documents);
     }
