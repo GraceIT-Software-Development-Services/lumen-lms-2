@@ -17,7 +17,7 @@ class StudentTrainingBatchTardinessRecord extends Model
      */
     protected $fillable = [
         'training_batch_id',
-        'student_id',
+        'user_id',
         'tardiness_date',
         'expected_check_in_time',
         'actual_check_in_time',
