@@ -34,7 +34,7 @@
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                             </svg>
-                            <span class="text-sm font-medium text-gray-700">Tardiness summary</span>
+                            <span class="text-sm font-medium text-gray-700">Tardiness and adsences summary</span>
                         </div>
 
                         <div class="p-4">
