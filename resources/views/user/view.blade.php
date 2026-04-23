@@ -97,7 +97,7 @@
                </form>
 
                {{-- Hidden Delete Form --}}
-               <form id="delete-user-form" action="#" method="POST" class="hidden">
+               <form id="delete-user-form" action="{{ route('users-delete.delete', $user->id) }}" method="POST" class="hidden">
                     @csrf
                     @method('DELETE')
                </form>

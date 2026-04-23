@@ -85,7 +85,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_confirmed',
         'agreed_to_terms',
 
-        'tesda_form_path'
+        'tesda_form_path',
+        'is_active'
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -130,6 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'competency_assessment' => 'array',
 
             'agreed_to_terms' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 
