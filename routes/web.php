@@ -37,7 +37,7 @@ Route::get('/', [PageController::class, 'index'])->name('landing');
 //     ->middleware(['auth', 'verified'])
 //     ->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'isActive'])->group(function () {
 
     Route::get('/data-privacy', [PageController::class, 'dataPrivacy'])->name('data.privacy');
 
@@ -136,6 +136,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('users-store.store');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users-edit.edit');
     Route::put('/users/{id}/update', [UserController::class, 'update'])->name('users-update.update');
+    Route::delete('/users/{id}/delete', [UserController::class, 'delete'])->name('users-delete.delete');
     // Chane password
     Route::get('/users/change-password', [UserController::class, 'changePassword'])->name('users-change-password');
     Route::put('/users/change-password', [UserController::class, 'updatePassword'])->name('users-update-password.update');

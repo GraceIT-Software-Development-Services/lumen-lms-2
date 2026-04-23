@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-7xl px-4 py-6">
+<div class="mx-auto max-w-full">
     <div class="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
 
         {{-- Main Header --}}

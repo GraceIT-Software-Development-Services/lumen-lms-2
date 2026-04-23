@@ -60,12 +60,21 @@ class UserController extends Controller
 
         $currentRole = $user->getRoleNames();
         $currentCenter = TrainerCenter::where('trainer_id', $user->id)->first();
-        $currentCenterData = Center::where('id', $currentCenter->center_id)->first();
+        $currentCenterData = null;
+
+        $currentCenterData = null;
+        if ($currentCenter !== null) {
+            $currentCenterData = Center::where('id', $currentCenter->center_id)->first();
+        }
 
         $roles = Role::all();
-        $centers = Center::all();
 
-        // dd($user, $currentRole, $currentCenterData, $roles, $centers);
+        if (auth()->user()->hasRole('Super Admin')) {
+            $roles = Role::whereIn('name', ['Super Admin', 'Director', 'Center Admin', 'Trainer'])->get();
+        } elseif (auth()->user()->hasRole('Director')) {
+            $roles = Role::whereIn('name', ['Director', 'Center Admin', 'Trainer'])->get();
+        }
+        $centers = Center::all();
 
         return view('user.view', [
             'rolelists' => $roles,
@@ -75,6 +84,45 @@ class UserController extends Controller
             'currentRole' => $currentRole,
             'currentCenterData' => $currentCenterData,
         ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if (in_array($request->role, ['Trainer', 'Center Admin'])) {
+            $user->center_id = $request->center_id;
+            $user->save();
+        } elseif (in_array($request->role, ['Super Admin', 'Director'])) {
+            $user->center_id = null;
+            $user->save();
+        }
+
+        $user->syncRoles($request->role);
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User updated successfully!');
+    }
+
+    public function delete($id)
+    {
+        $user = User::where('id', $id)->firstOrFail();
+
+        // Prevent deleting your own account
+        if ($user->id === auth()->user()->id) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'You cannot delete your own account.');
+        }
+
+        $user->update([
+            'is_active' => false,
+        ]);
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User deactivated successfully!');
     }
 
     public function changePassword()
