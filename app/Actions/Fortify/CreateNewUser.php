@@ -2,8 +2,8 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\Learner;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -29,20 +29,20 @@ class CreateNewUser implements CreatesNewUsers
                 'max:255',
                 Rule::unique(User::class),
             ],
-
+            'user_type' => ['required', 'string', Rule::in(['Student', 'Instructor'])],
             'password' => $this->passwordRules(),
         ])->validate();
 
-        // Edited..
-        // Create the user and assign the 'Student' role
         $user = User::create([
             'name' => $input['name'],
             'last_name' => $input['last_name'],
             'email' => $input['email'],
-            'password' => $input['password'],
-            'is_confirmed' => 0
+            'password' => Hash::make($input['password']),
+            'is_confirmed' => 0,
         ]);
-        $user->assignRole('Student');
+
+        $user->assignRole($input['user_type'] === 'Instructor' ? 'Trainer' : 'Student');
+
         return $user;
     }
 }

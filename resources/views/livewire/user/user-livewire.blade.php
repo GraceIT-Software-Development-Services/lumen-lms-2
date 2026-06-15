@@ -1,247 +1,295 @@
-<div class="space-y-6">
+<div class="mx-auto max-w-full space-y-5">
 
-    {{-- TOAST NOTIFICATION --}}
-    <div
-        x-data="{
-            show: false,
-            type: 'success',
-            message: '',
-            init() {
-                $wire.on('notify', ({ type, message }) => {
-                    this.type = type;
-                    this.message = message;
-                    this.show = true;
-                    setTimeout(() => this.show = false, 3500);
-                });
-            }
-        }"
-        x-show="show"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-[-12px]"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-[-12px]"
-        class="fixed top-5 right-5 z-[9999] flex items-center gap-3 rounded-2xl px-5 py-3.5 shadow-xl shadow-black/10 border text-sm font-medium"
-        :class="{
-            'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-300': type === 'success',
-            'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/40 dark:border-red-700 dark:text-red-300': type === 'error'
-        }"
-        style="display: none;">
-        <svg x-show="type === 'success'" class="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-        </svg>
-        <svg x-show="type === 'error'" class="h-4 w-4 text-red-500 dark:text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-        </svg>
-        <span x-text="message"></span>
-        <button @click="show = false" class="ml-2 opacity-50 hover:opacity-100">
-            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-        </button>
-    </div>
-
-    {{-- DELETE CONFIRMATION MODAL --}}
+    {{-- ===== DELETE CONFIRMATION MODAL ===== --}}
     @if ($showDeleteModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-gray-900/60 dark:bg-black/70" wire:click="cancelDelete"></div>
-
-        {{-- Modal Panel --}}
-        <div class="relative z-10 w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 py-6 backdrop-blur-sm">
+        <div class="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
 
             {{-- Modal Header --}}
-            <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/40">
-                        <svg class="h-5 w-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                        </svg>
+            <div class="border-b border-slate-100 bg-gradient-to-r from-rose-600 to-red-600 px-5 py-4 dark:border-slate-800">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h3 class="text-base font-semibold text-white">
+                                Delete User
+                            </h3>
+                            <p class="mt-0.5 text-sm text-rose-50">
+                                This action cannot be undone.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Delete User</h3>
+
+                    <button
+                        type="button"
+                        wire:click="cancelDelete"
+                        class="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white/70 transition hover:bg-white/15 hover:text-white">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
-                <button wire:click="cancelDelete" class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300 transition">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
             </div>
 
             {{-- Modal Body --}}
-            <div class="px-6 py-5">
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Are you sure you want to delete the user
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ $confirmingDeleteName }}</span>?
-                    This action <span class="font-medium text-red-600 dark:text-red-400">cannot be undone</span>.
-                </p>
+            <div class="px-5 py-5">
+                <div class="rounded-2xl border border-rose-100 bg-rose-50 p-4 dark:border-rose-900/50 dark:bg-rose-950/30">
+                    <p class="text-sm leading-relaxed text-rose-800 dark:text-rose-300">
+                        Are you sure you want to delete
+                        <span class="font-semibold text-rose-950 dark:text-rose-100">
+                            {{ $confirmingDeleteName }}
+                        </span>?
+                    </p>
+                </div>
             </div>
 
             {{-- Modal Footer --}}
-            <div class="flex items-center justify-end gap-3 border-t border-gray-100 dark:border-gray-700 px-6 py-4">
+            <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-5 py-4 dark:border-slate-800 dark:bg-slate-800/40 sm:flex-row sm:items-center sm:justify-end">
                 <button
+                    type="button"
                     wire:click="cancelDelete"
-                    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
                     Cancel
                 </button>
+
                 <button
+                    type="button"
                     wire:click="deleteUser"
                     wire:loading.attr="disabled"
-                    class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60 dark:bg-red-700 dark:hover:bg-red-600">
+                    wire:target="deleteUser"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500/20 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-rose-500 dark:hover:bg-rose-600">
+
+                    <svg wire:loading.remove wire:target="deleteUser" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+
+                    <svg wire:loading wire:target="deleteUser" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+
                     <span wire:loading.remove wire:target="deleteUser">Delete User</span>
-                    <span wire:loading wire:target="deleteUser" class="flex items-center gap-2">
-                        <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                        </svg>
-                        Deleting…
-                    </span>
+                    <span wire:loading wire:target="deleteUser">Deleting...</span>
                 </button>
             </div>
         </div>
     </div>
     @endif
 
-    {{-- HEADER --}}
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div class="flex items-start gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/40">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632Z" />
-                </svg>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Users</h1>
-                <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Manage and monitor all system users</p>
-            </div>
-        </div>
+    {{-- ===== MAIN CARD ===== --}}
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            {{-- Search --}}
-            <div class="relative">
-                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 11 5 11a6 6 0 0112 0z" />
-                </svg>
-                <input
-                    type="text"
-                    wire:model.live="search"
-                    placeholder="Search user..."
-                    class="w-full rounded-2xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm transition placeholder:text-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 sm:w-72 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-900/40">
-            </div>
+        {{-- ===== HEADER ===== --}}
+        <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-emerald-50 to-blue-50 px-5 py-5 dark:border-slate-800 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex items-start gap-3">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </div>
 
-            {{-- Create --}}
-            <a
-                href="{{ route('users-create.create') }}"
-                class="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:shadow-indigo-900/40 dark:focus:ring-offset-gray-900">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                New User
-            </a>
-        </div>
-    </div>
-
-    {{-- TABLE --}}
-    <div class="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <div class="border-b border-gray-100 dark:border-gray-700 px-6 py-4">
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200">User Directory</h2>
-                    <p class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">View user details, email, assigned roles, and manage records.</p>
+                    <div>
+                        <h1 class="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+                            User Management
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                            Manage user accounts, assigned roles, and system access.
+                        </p>
+                    </div>
                 </div>
-                @if(method_exists($users, 'total'))
-                <div class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-400">
-                    <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400"></span>
-                    {{ $users->total() }} user{{ $users->total() !== 1 ? 's' : '' }}
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+                    {{-- Total Badge --}}
+                    <div class="inline-flex w-fit items-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                        Total Users
+                        <span class="ml-2 rounded-lg bg-slate-100 px-2 py-1 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                            {{ method_exists($users, 'total') ? $users->total() : count($users) }}
+                        </span>
+                    </div>
+
+                    {{-- Search --}}
+                    <div class="relative">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+
+                        <input
+                            type="text"
+                            wire:model.live.debounce.300ms="search"
+                            placeholder="Search user..."
+                            class="block w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 sm:w-72">
+
+                        @if(!empty($search))
+                        <button
+                            type="button"
+                            wire:click="$set('search', '')"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300">
+                            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707A1 1 0 116.707 5.293L10 8.586z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        @endif
+                    </div>
+
+                    {{-- Add User --}}
+                    <a href="{{ route('users-create.create') }}"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add User
+                    </a>
                 </div>
-                @endif
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                <thead class="bg-gray-50/80 dark:bg-gray-700/50">
+        {{-- Livewire Loading Bar --}}
+        <div wire:loading wire:target="search,deleteUser" class="h-1 w-full overflow-hidden bg-emerald-50 dark:bg-emerald-950/40">
+            <div class="h-full w-1/3 animate-pulse rounded-r-full bg-emerald-500"></div>
+        </div>
+
+        {{-- ===== TABLE ===== --}}
+        <div class="overflow-x-auto border-t border-slate-100 dark:border-slate-800">
+            <table class="w-full text-left text-sm text-slate-500 dark:text-slate-400">
+                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
                     <tr>
-                        <th class="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 w-14">#</th>
-                        <th class="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">User</th>
-                        <th class="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Email</th>
-                        <th class="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Roles</th>
-                        <th class="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 w-32">Actions</th>
+                        <th class="px-5 py-3 font-semibold">#</th>
+                        <th class="px-5 py-3 font-semibold">User</th>
+                        <th class="px-5 py-3 font-semibold">Email</th>
+                        <th class="px-5 py-3 font-semibold">Roles</th>
+                        <th class="px-5 py-3 text-right font-semibold">Actions</th>
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                <tbody class="divide-y divide-slate-100 bg-white dark:divide-slate-800 dark:bg-slate-900">
                     @forelse ($users as $user)
-                    <tr class="group transition-colors hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10">
-                        <td class="px-6 py-4">
-                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-gray-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors dark:bg-gray-700 dark:text-gray-400 dark:group-hover:bg-indigo-900/40 dark:group-hover:text-indigo-400">
-                                {{ $loop->iteration }}
-                            </div>
+                    <tr wire:key="user-row-{{ $user->id }}" class="transition hover:bg-slate-50/80 dark:hover:bg-slate-800/60">
+
+                        {{-- # --}}
+                        <td class="px-5 py-4 align-top text-sm font-medium text-slate-400 dark:text-slate-500">
+                            {{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}
                         </td>
 
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 text-sm font-bold text-white shadow-sm shadow-indigo-200 dark:shadow-indigo-900/40">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                        {{-- User --}}
+                        <th scope="row" class="px-5 py-4 align-top">
+                            <div class="flex items-start gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-950/40">
+                                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                                        {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                                    </span>
                                 </div>
+
                                 <div class="min-w-0">
-                                    <p class="truncate font-semibold text-gray-900 dark:text-gray-100">{{ $user->name }}</p>
-                                    <p class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">ID #{{ $user->id }}</p>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <p class="truncate text-sm font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+                                            {{ $user->name }}
+                                        </p>
+
+                                        @if($user->id === auth()->id())
+                                        <span class="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
+                                            You
+                                        </span>
+                                        @endif
+                                    </div>
+
+                                    <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                        ID #{{ $user->id }}
+                                    </p>
                                 </div>
                             </div>
+                        </th>
+
+                        {{-- Email --}}
+                        <td class="px-5 py-4 align-top">
+                            <span class="inline-flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
+                                <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5A2.25 2.25 0 0119.5 19.5h-15A2.25 2.25 0 012.25 17.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15A2.25 2.25 0 002.25 6.75m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0l-7.5-4.615a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                </svg>
+                                {{ $user->email }}
+                            </span>
                         </td>
 
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ $user->email }}</span>
-                        </td>
-
-                        <td class="px-6 py-4">
+                        {{-- Roles --}}
+                        <td class="px-5 py-4 align-top">
                             <div class="flex flex-wrap gap-1.5">
                                 @forelse ($user->roles as $role)
-                                <span class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-300">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                     {{ $role->name }}
                                 </span>
                                 @empty
-                                <span class="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400">
+                                <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500">
                                     No role
                                 </span>
                                 @endforelse
                             </div>
                         </td>
 
-                        <td class="px-6 py-4 text-right">
-                            <div class="inline-flex items-center justify-end gap-2">
-                                {{-- Edit / You badge --}}
-                                @if($user->id !== auth()->id())
-                                <a
-                                    href="{{ route('users-edit.edit', $user->id) }}"
-                                    title="Edit user"
-                                    class="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 hover:border-indigo-300 hover:shadow-sm dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 dark:hover:border-indigo-700">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                        {{-- Actions --}}
+                        <td class="px-5 py-4 text-right align-top">
+                            @if($user->id !== auth()->id())
+                            <div class="flex flex-wrap items-center justify-end gap-2">
+                                <a href="{{ route('users-edit.edit', $user->id) }}"
+                                    class="inline-flex items-center gap-1.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                     Edit
                                 </a>
-                                @else
-                                <span class="inline-flex items-center rounded-xl px-3 py-1.5 text-xs text-gray-300 dark:text-gray-600 select-none" title="You cannot edit your own account here">
-                                    You
-                                </span>
-                                @endif
+
+                                <button
+                                    type="button"
+                                    wire:click="confirmDelete({{ $user->id }})"
+                                    class="inline-flex items-center gap-1.5 rounded-xl border border-rose-100 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 focus:outline-none focus:ring-4 focus:ring-rose-500/10 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete
+                                </button>
                             </div>
+                            @else
+                            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                                Current User
+                            </span>
+                            @endif
                         </td>
                     </tr>
+
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-20 text-center">
-                            <div class="mx-auto flex max-w-sm flex-col items-center">
-                                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600">
-                                    <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632Z" />
+                        <td colspan="5" class="px-6 py-16 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
+                                    <svg class="h-7 w-7 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0ZM4.5 20.118a7.5 7.5 0 0115 0" />
                                     </svg>
                                 </div>
-                                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">No users found</h3>
-                                <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">Try adjusting your search or create a new user.</p>
+
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                                        No users found
+                                    </p>
+                                    <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                                        Try adjusting your search or create a new user.
+                                    </p>
+                                </div>
+
+                                <a href="{{ route('users-create.create') }}"
+                                    class="mt-2 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add User
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -249,13 +297,24 @@
                 </tbody>
             </table>
         </div>
-    </div>
 
-    {{-- PAGINATION --}}
-    @if ($users->hasPages())
-    <div class="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        {{ $users->links() }}
-    </div>
-    @endif
+        {{-- ===== PAGINATION ===== --}}
+        @if ($users->hasPages())
+        <div class="flex flex-col gap-3 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+            <div class="text-xs text-slate-500 dark:text-slate-400">
+                Showing
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $users->firstItem() }}</span>
+                –
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $users->lastItem() }}</span>
+                of
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $users->total() }}</span>
+                users
+            </div>
 
+            <div>
+                {{ $users->links() }}
+            </div>
+        </div>
+        @endif
+    </div>
 </div>

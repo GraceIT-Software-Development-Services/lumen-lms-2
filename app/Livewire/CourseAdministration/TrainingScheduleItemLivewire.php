@@ -12,7 +12,11 @@ class TrainingScheduleItemLivewire extends Component
 
     public function render()
     {
-        $scheduleItems = TrainingScheduleItem::where('name', 'like', "%{$this->search}%")->paginate();
+        $scheduleItems = TrainingScheduleItem::query()
+            ->where('center_id', auth()->user()->center_id)
+            ->where('name', 'like', "%{$this->search}%")
+            ->paginate();
+
         return view('livewire.course-administration.training-schedule-item-livewire', compact('scheduleItems'));
     }
 }

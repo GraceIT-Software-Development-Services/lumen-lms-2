@@ -157,8 +157,6 @@ class UpdateTrainingBatchLivewire extends Component
             return;
         }
 
-        dd($this->editingBatchId);
-
         $this->validate([
             'trainingBatchCourseId'     => 'required|exists:training_courses,id',
             'batchCode'                 => 'required|unique:training_batches,batch_code,' . $this->editingBatchId,

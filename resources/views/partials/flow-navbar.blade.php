@@ -161,6 +161,13 @@
                     Dashboard
                 </a>
 
+                <a href="{{ route('training_student_individual_attendance_report.index') }}" class="{{ $navItem }}">
+                    <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l2.5 2.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    My Attendance
+                </a>
+
                 <a href="{{ route('statistics.students') }}" class="{{ $navItem }}">
                     <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.5V21h4.5v-7.5H3zM9.75 9V21h4.5V9h-4.5zM16.5 3.75V21H21V3.75h-4.5z" />
@@ -192,6 +199,16 @@
                     </svg>
                     Dashboard
                 </a>
+
+                @if (auth()->user()->hasRole('Trainer'))
+                <a href="{{ route('learners.edit', auth()->user()->uuid) }}" class="{{ $navItem }}">
+                    <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    Profile
+                </a>
+                @endif
+
                 @endif
 
                 @if (auth()->user()->hasRole('Director') || auth()->user()->hasRole('Center Admin'))
@@ -253,8 +270,9 @@
                 </a>
                 @endif
 
-                @if (auth()->user()->hasRole('Center Admin'))
+                @if (auth()->user()->hasRole('Center Admin') || auth()->user()->hasRole('Director'))
                 <p class="{{ $sectionLabel }}">Management</p>
+                @if (auth()->user()->hasRole('Center Admin'))
                 <a href="{{ route('training_batches.index') }}" class="{{ $navItem }}">
                     <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
@@ -268,6 +286,30 @@
                     </svg>
                     Schedule
                 </a>
+                @endif
+
+                @if (auth()->user()->hasRole('Director'))
+                <a href="{{ route('associations.index') }}" class="{{ $navItem }}">
+                    <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+                    Associations
+                </a>
+
+                <a href="{{ route('trainer-applications.index') }}" class="{{ $navItem }}">
+                    <svg class="{{ $iconClass }}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.5 20.25a7.5 7.5 0 0115 0" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.5 8.25v-3m0 0h-3m3 0l-4.5 4.5" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.75 4.5h-1.5A2.25 2.25 0 003 6.75v10.5a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 17.25v-4.5" />
+                    </svg>
+                    Trainer Application
+                </a>
+                @endif
                 @endif
 
                 @if (auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Director'))
