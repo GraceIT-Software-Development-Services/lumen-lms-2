@@ -10,34 +10,57 @@ use Modules\PerformanceAdministration\Models\StudentBatchAttendance;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 
-class StudentAttendanceReport extends Component
+class StudentIndividualAttendanceReport extends Component
 {
-    public $trainingBatch        = null;
-    public $trainingBatchUuid    = null;
-    public $trainingScheduleItem = null;
+    #[Locked]
+    public $userId = null; // pass via mount() or route param
+
+    public $trainingBatches     = [];
+    public $trainingBatchUuid   = null;
 
     public array $students      = [];
     public array $dateRange     = [];
     public array $attendanceMap = [];
 
-    public function mount(string $trainingBatchUuid): void
-    {
-        $this->trainingBatchUuid    = $trainingBatchUuid;
-        $this->trainingBatch        = TrainingBatch::where('uuid', $trainingBatchUuid)->firstOrFail();
-        $this->trainingScheduleItem = TrainingScheduleItem::find($this->trainingBatch->training_schedule_item_id);
+    // Keyed by training_batch_id
+    public array $batchReports = [];
 
-        $this->loadReport();
+    public function mount(): void
+    {
+        $this->userId = auth()->user()->id;
+
+        $this->trainingBatches = DB::table('training_batch_students')
+            ->join('training_batches', 'training_batch_students.training_batch_id', '=', 'training_batches.id')
+            ->where('training_batch_students.user_id', $this->userId)
+            ->select(
+                'training_batches.id as training_batch_id',
+                'training_batches.batch_name',   // ← add
+                'training_batches.batch_code',   // ← add
+                'training_batches.start_date',
+                'training_batches.end_date',
+                'training_batches.training_schedule_item_id',
+                'training_batch_students.id as training_batch_student_id'
+            )
+            ->get();
+
+        foreach ($this->trainingBatches as $batch) {
+            $scheduleItem = TrainingScheduleItem::find($batch->training_schedule_item_id);
+            $this->batchReports[$batch->training_batch_id] = $this->loadReport($batch, $scheduleItem);
+        }
     }
 
-    private function getScheduledDayNames(): array
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private function getScheduledDayNames(?TrainingScheduleItem $scheduleItem): array
     {
-        if (! $this->trainingScheduleItem) {
-            return [];
-        }
+        if (! $scheduleItem) return [];
 
-        $days = $this->trainingScheduleItem->schedule_days;
-
+        $days = $scheduleItem->schedule_days;
         if (is_string($days)) {
             $days = json_decode($days, true);
         }
@@ -45,31 +68,22 @@ class StudentAttendanceReport extends Component
         return array_map('strtolower', $days ?? []);
     }
 
-    private function getExpectedCheckIn(): ?Carbon
+    private function getExpectedCheckIn(?TrainingScheduleItem $scheduleItem): ?Carbon
     {
-        if (! $this->trainingScheduleItem?->start_time) {
-            return null;
-        }
-
-        return Carbon::parse($this->trainingScheduleItem->start_time);
+        if (! $scheduleItem?->start_time) return null;
+        return Carbon::parse($scheduleItem->start_time);
     }
 
-    private function buildDateRange(array $scheduledDays): array
+    private function buildDateRange(object $batch, array $scheduledDays): array
     {
         $period = CarbonPeriod::create(
-            Carbon::parse($this->trainingBatch->start_date),
-            Carbon::parse($this->trainingBatch->end_date)
+            Carbon::parse($batch->start_date),
+            Carbon::parse($batch->end_date)
         );
 
         return collect($period)
             ->filter(function (Carbon $date) use ($scheduledDays) {
-                // If no schedule days defined, include every date
-                if (empty($scheduledDays)) {
-                    return true;
-                }
-
-                // Only include dates whose day name matches schedule_days
-                // e.g. Carbon->format('l') returns "Monday", "Tuesday", etc.
+                if (empty($scheduledDays)) return true;
                 return in_array(strtolower($date->format('l')), $scheduledDays);
             })
             ->map(fn(Carbon $date) => $date->toDateString())
@@ -77,11 +91,12 @@ class StudentAttendanceReport extends Component
             ->toArray();
     }
 
-    private function loadStudents(): array
+    private function loadStudents(int $batchId): array
     {
         return TrainingBatchStudent::query()
             ->join('users', 'training_batch_students.user_id', '=', 'users.id')
-            ->where('training_batch_students.training_batch_id', $this->trainingBatch->id)
+            ->where('training_batch_students.training_batch_id', $batchId)
+            ->where('training_batch_students.user_id', $this->userId) // ← add this
             ->select(
                 'training_batch_students.id   as batch_student_id',
                 'training_batch_students.user_id',
@@ -91,12 +106,6 @@ class StudentAttendanceReport extends Component
             ->toArray();
     }
 
-    /**
-     * Load attendance records and merge any duplicate rows that exist
-     * for the same student/date into a single record. This guards
-     * against duplicate inserts (e.g. one row created for the AM
-     * check-in and another for the PM check-in).
-     */
     private function loadAttendances(array $batchStudentIds): Collection
     {
         return StudentBatchAttendance::whereIn('training_batch_student_id', $batchStudentIds)
@@ -109,9 +118,7 @@ class StudentAttendanceReport extends Component
             })
             ->map(function (Collection $rows) {
                 return $rows->reduce(function (?StudentBatchAttendance $merged, StudentBatchAttendance $row) {
-                    if (! $merged) {
-                        return clone $row;
-                    }
+                    if (! $merged) return clone $row;
 
                     $merged->first_check_in_time   = $merged->first_check_in_time   ?: $row->first_check_in_time;
                     $merged->first_check_out_time  = $merged->first_check_out_time  ?: $row->first_check_out_time;
@@ -138,16 +145,12 @@ class StudentAttendanceReport extends Component
         $minutesLate = (int) $actualCheckIn->diffInMinutes($expectedOnDate);
 
         $severity = match (true) {
-            $minutesLate >= 31 => 'severe',    // 31+ minutes
-            $minutesLate >= 11 => 'moderate',  // 11–30 minutes
-            default            => 'minor',     // 1–10 minutes
+            $minutesLate >= 31 => 'severe',
+            $minutesLate >= 11 => 'moderate',
+            default            => 'minor',
         };
 
-        return [
-            'is_late'      => true,
-            'minutes_late' => $minutesLate,
-            'severity'     => $severity,
-        ];
+        return ['is_late' => true, 'minutes_late' => $minutesLate, 'severity' => $severity];
     }
 
     private function resolveSessionStatus(?Carbon $checkIn, ?Carbon $checkOut): string
@@ -162,9 +165,9 @@ class StudentAttendanceReport extends Component
     private function resolveOverallStatus(?Carbon $amIn, ?Carbon $amOut, ?Carbon $pmIn, ?Carbon $pmOut): string
     {
         return match (true) {
-            $amIn && $pmOut                     => 'present',
-            $amIn || $amOut || $pmIn || $pmOut  => 'partial',
-            default                             => 'absent',
+            $amIn && $pmOut                    => 'present',
+            $amIn || $amOut || $pmIn || $pmOut => 'partial',
+            default                            => 'absent',
         };
     }
 
@@ -193,8 +196,6 @@ class StudentAttendanceReport extends Component
         $pmOut = $att->second_check_out_time ? Carbon::parse($att->second_check_out_time) : null;
 
         $tardiness     = $this->resolveTardiness($amIn, $expectedCheckIn, $date);
-        $amStatus      = $this->resolveSessionStatus($amIn, $amOut);
-        $pmStatus      = $this->resolveSessionStatus($pmIn, $pmOut);
         $overallStatus = $this->resolveOverallStatus($amIn, $amOut, $pmIn, $pmOut);
 
         return [
@@ -204,58 +205,61 @@ class StudentAttendanceReport extends Component
             'severity'     => $tardiness['severity'],
             'expected_in'  => $expectedInFormatted,
             'am'           => [
-                'status'    => $amStatus,
+                'status'    => $this->resolveSessionStatus($amIn, $amOut),
                 'check_in'  => $amIn?->format('g:i A'),
                 'check_out' => $amOut?->format('g:i A'),
             ],
             'pm'           => [
-                'status'    => $pmStatus,
+                'status'    => $this->resolveSessionStatus($pmIn, $pmOut),
                 'check_in'  => $pmIn?->format('g:i A'),
                 'check_out' => $pmOut?->format('g:i A'),
             ],
         ];
     }
 
-    private function loadReport(): void
+    // -------------------------------------------------------------------------
+    // Core report builder — one batch at a time
+    // -------------------------------------------------------------------------
+
+    private function loadReport(object $batch, ?TrainingScheduleItem $scheduleItem): array
     {
-        $scheduledDays       = $this->getScheduledDayNames();
-        $expectedCheckIn     = $this->getExpectedCheckIn();
+        $scheduledDays       = $this->getScheduledDayNames($scheduleItem);
+        $expectedCheckIn     = $this->getExpectedCheckIn($scheduleItem);
         $expectedInFormatted = $expectedCheckIn?->format('g:i A') ?? '';
 
-        // Step 1 — Build date range (only scheduled days within batch period)
-        $this->dateRange = $this->buildDateRange($scheduledDays);
+        $dateRange = $this->buildDateRange($batch, $scheduledDays);
+        $students  = $this->loadStudents($batch->training_batch_id);
 
-        // Step 2 — Load students enrolled in this batch
-        $this->students = $this->loadStudents();
-
-        // Step 3 — Fetch, merge duplicates, and group all attendance records
-        $batchStudentIds = collect($this->students)->pluck('batch_student_id')->toArray();
+        $batchStudentIds = collect($students)->pluck('batch_student_id')->toArray();
         $attendances     = $this->loadAttendances($batchStudentIds);
 
-        // Step 4 — Build attendance map: student × scheduled date
-        $this->attendanceMap = [];
-        $today               = Carbon::today()->toDateString();
+        $attendanceMap = [];
+        $today         = Carbon::today()->toDateString();
 
-        foreach ($this->students as $student) {
-            foreach ($this->dateRange as $date) {
-
-                // Skip future dates — attendance not expected yet
-                if ($date > $today) {
-                    continue;
-                }
+        foreach ($students as $student) {
+            foreach ($dateRange as $date) {
+                if ($date > $today) continue;
 
                 $lookupKey = "{$student['batch_student_id']}_{$date}";
                 $att       = $attendances->get($lookupKey);
 
-                $this->attendanceMap[$student['batch_student_id']][$date] = $att
+                $attendanceMap[$student['batch_student_id']][$date] = $att
                     ? $this->buildAttendanceEntry($att, $date, $expectedCheckIn, $expectedInFormatted)
                     : $this->buildAbsentEntry($expectedInFormatted);
             }
         }
+
+        return [
+            'batch'         => $batch,
+            'scheduleItem'  => $scheduleItem,   // ← add this
+            'dateRange'     => $dateRange,
+            'students'      => $students,
+            'attendanceMap' => $attendanceMap,
+        ];
     }
 
     public function render()
     {
-        return view('livewire.performance-administration.report.student-attendance-report');
+        return view('livewire.performance-administration.report.student-individual-attendance-report');
     }
 }

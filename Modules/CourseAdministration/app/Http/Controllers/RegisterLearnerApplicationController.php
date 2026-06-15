@@ -3,6 +3,7 @@
 namespace Modules\CourseAdministration\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Association;
 use App\Models\User;
 use App\Models\UserDocument;
 use FPDF;
@@ -24,10 +25,13 @@ class RegisterLearnerApplicationController extends Controller
     /**
      * Show the registration form.
      */
+
     public function create()
     {
         $courses = TrainingCourse::all();
-        return view('application.new-application.create', compact('courses'));
+        $associations = Association::all();
+
+        return view('application.new-application.create', compact('courses', 'associations'));
     }
 
     public function registerExisting($uuid)
@@ -84,6 +88,10 @@ class RegisterLearnerApplicationController extends Controller
             ? json_decode($learner->competency_assessment, true) ?? []
             : ($learner->competency_assessment ?? []);
 
+        $nttc = is_string($learner->nttc)
+            ? json_decode($learner->nttc, true) ?? []
+            : ($learner->nttc ?? []);
+
         return view('application.update-application.index', compact(
             'learner',
             'documents',
@@ -91,6 +99,7 @@ class RegisterLearnerApplicationController extends Controller
             'trainings',
             'licensureExamination',
             'competencyAssessment',
+            'nttc'
         ));
     }
 
@@ -114,7 +123,7 @@ class RegisterLearnerApplicationController extends Controller
             'picture'                                => ['nullable', 'image', 'max:2048'],
             'schoolName'                             => ['nullable', 'string', 'max:255'],
             'schoolAddress'                          => ['nullable', 'string'],
-            'clientType'                             => ['nullable', 'in:tvet_graduating_student,tvet_graduate,industry_worker,k12,owf'],
+            'clientType'                             => ['nullable', 'in:Industry Worker,Student,Cooperative,Association,Graduate'],
 
             'addressNumberStreet'                    => ['nullable', 'string'],
             'addressBarangay'                        => ['nullable', 'string', 'max:255'],
@@ -158,6 +167,14 @@ class RegisterLearnerApplicationController extends Controller
             'competency_assessment.*.date_issued'        => ['nullable', 'string', 'max:255'],
             'competency_assessment.*.expiry_date'        => ['nullable', 'string', 'max:255'],
 
+            'nttc'                                      => 'nullable|array',
+            'nttc.*.level'                              => 'nullable|in:Level I,Level II,Level III,Level IV',
+            'nttc.*.competency'                         => 'nullable|string|max:255',
+            'nttc.*.certificate_number'                 => 'nullable|string|max:255',
+            'nttc.*.issued_on'                          => 'nullable|string|max:255',
+            'nttc.*.valid_until'                        => 'nullable|string|max:255',
+            'nttc.*.file'                               => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf,doc,docx', 'max:10240'],
+
             'documents'                              => ['nullable', 'array'],
             'documents.*.id'                         => ['nullable', 'integer', 'exists:user_documents,id'],
             'documents.*.type'                       => ['nullable', 'string'],
@@ -169,9 +186,17 @@ class RegisterLearnerApplicationController extends Controller
             'contactEmail.unique'    => 'This email is already used by another learner.',
             'documents.*.file.mimes' => 'Document must be a file of type: jpg, jpeg, png, pdf.',
             'documents.*.file.max'   => 'Each document must not exceed 10MB.',
+            'nttc.*.file.mimes'      => 'NTTC file must be a file of type: jpg, jpeg, png, pdf, doc, docx.',
+            'nttc.*.file.max'        => 'Each NTTC file must not exceed 10MB.',
         ]);
 
         DB::transaction(function () use ($request, $validated, $learner) {
+
+            if (!empty($validated['contactEmail'])) {
+                $learner->update([
+                    'password' => Hash::make('password')
+                ]);
+            }
 
             if ($request->hasFile('picture')) {
                 if ($learner->picture_path) {
@@ -182,6 +207,38 @@ class RegisterLearnerApplicationController extends Controller
                 $picturePath = $learner->picture_path;
             }
 
+            // ── Handle NTTC file uploads ────────────────────────────────────────
+            $nttcFiles  = $request->file('nttc', []);
+            $nttcInputs = $validated['nttc'] ?? [];
+
+            // Existing NTTC data from DB (decode if stored as JSON string)
+            $existingNttc = is_array($learner->nttc)
+                ? $learner->nttc
+                : (json_decode($learner->nttc ?? '[]', true) ?: []);
+
+            foreach ($nttcInputs as $index => &$nttcItem) {
+                $newFile = $nttcFiles[$index]['file'] ?? null;
+
+                if ($newFile && $newFile->isValid()) {
+                    // Delete old file if exists
+                    $oldPath = $existingNttc[$index]['file_path'] ?? null;
+                    if ($oldPath && Storage::disk('s3')->exists($oldPath)) {
+                        Storage::disk('s3')->delete($oldPath);
+                    }
+
+                    // Store new file
+                    $nttcItem['file_path'] = $newFile->store('nttc-documents', 's3');
+                } else {
+                    // Keep existing file path if no new file uploaded
+                    $nttcItem['file_path'] = $existingNttc[$index]['file_path'] ?? null;
+                }
+
+                // Remove the uploaded file object before json_encode (not serializable)
+                unset($nttcItem['file']);
+            }
+            unset($nttcItem);
+
+            // 
             $learner->update([
                 'uli'                           => $validated['uli'] ?? null,
                 'name'                          => $validated['firstName'],
@@ -225,6 +282,9 @@ class RegisterLearnerApplicationController extends Controller
                     : null,
                 'competency_assessment'         => !empty($validated['competency_assessment'])
                     ? json_encode($validated['competency_assessment'])
+                    : null,
+                'nttc'                          => !empty($nttcInputs)
+                    ? json_encode($nttcInputs)
                     : null,
             ]);
 
@@ -317,7 +377,7 @@ class RegisterLearnerApplicationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'uli'                                => 'required|string|max:255|unique:users,uli',
+            'uli'                                => 'nullable|string|max:255|unique:users,uli',
             'firstName'                          => 'required|string|max:255',
             'middleName'                         => 'nullable|string|max:255',
             'lastName'                           => 'required|string|max:255',
@@ -325,7 +385,7 @@ class RegisterLearnerApplicationController extends Controller
             'picture'                            => 'nullable|image|max:2048',
             'schoolName'                         => 'nullable|string|max:255',
             'schoolAddress'                      => 'nullable|string',
-            'clientType'                         => 'nullable|in:tvet_graduating_student,tvet_graduate,industry_worker,k12,owf',
+            'clientType'                         => 'nullable|in:Industry Worker,Student,Cooperative,Association,Graduate',
 
             'sex'                                => 'required|in:male,female',
             'civilStatus'                        => 'required|in:single,married,widow,separated',
@@ -379,6 +439,15 @@ class RegisterLearnerApplicationController extends Controller
             'competency_assessment.*.certificate_number' => 'nullable|string|max:255',
             'competency_assessment.*.date_issued'        => 'nullable|string|max:255',
             'competency_assessment.*.expiry_date'        => 'nullable|string|max:255',
+
+            'nttc'                                      => 'nullable|array',
+            'nttc.*.level'                              => 'nullable|in:Level I,Level II,Level III,Level IV',
+            'nttc.*.competency'                         => 'nullable|string|max:255',
+            'nttc.*.certificate_number'                 => 'nullable|string|max:255',
+            'nttc.*.issued_on'                          => 'nullable|string|max:255',
+            'nttc.*.valid_until'                        => 'nullable|string|max:255',
+            // pdf, docx, doc, jpg, jpeg, png only and max size 10MB
+            'nttc.*.file'                               => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
 
             'documents'                          => 'nullable|array',
             'documents.*.type'                   => 'nullable|string',
@@ -458,11 +527,28 @@ class RegisterLearnerApplicationController extends Controller
                 'competency_assessment'         => !empty($validated['competency_assessment'])
                     ? json_encode($validated['competency_assessment'])
                     : null,
+                'nttc'                          => !empty($validated['nttc'])
+                    ? json_encode($validated['nttc'])
+                    : null,
+
                 'is_confirmed'                  => true,
                 'agreed_to_terms'               => true,
             ]);
 
             $learner->assignRole('Student');
+
+            // Save nttc file in s3
+            if (!empty($validated['nttc'])) {
+                foreach ($validated['nttc'] as $index => $nttcData) {
+                    if (isset($nttcData['file']) && $nttcData['file']->isValid()) {
+                        $nttcFilePath = $nttcData['file']->store('nttc-documents', 's3');
+                        // Update the NTTC entry with the file path
+                        $nttcArray = json_decode($learner->nttc, true);
+                        $nttcArray[$index]['file_path'] = $nttcFilePath;
+                        $learner->update(['nttc' => json_encode($nttcArray)]);
+                    }
+                }
+            }
 
             // --- Documents ---
             $documentFiles  = $request->file('documents', []);

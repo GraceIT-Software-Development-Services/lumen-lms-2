@@ -20,11 +20,11 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div class="flex items-center justify-center min-h-screen px-4 py-8">
-        <div class="flex flex-col lg:flex-row w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="flex flex-col lg:flex-row w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[95vh]">
             <!-- Left Section - Enhanced -->
             <div
-                class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-blue-400 to-indigo-500 text-white p-8 lg:p-12 flex-col justify-center relative overflow-hidden">
+                class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-blue-400 to-indigo-500 text-white p-6 lg:p-8 flex-col justify-center relative overflow-hidden">
                 <!-- Background Pattern -->
                 <div class="absolute inset-0 opacity-10">
                     <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -38,32 +38,32 @@
                 </div>
 
                 <div class="relative z-10 text-center lg:text-left">
-                    <div class="mb-6">
-                        <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-4">
-                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="mb-4">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-2xl mb-3">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path
                                     d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                             </svg>
                         </div>
-                        <h1 class="text-4xl lg:text-5xl font-bold mb-2 text-glow">LUMEN v1.0</h1>
-                        <div class="w-20 h-1 bg-white/60 rounded-full mx-auto lg:mx-0 mb-6"></div>
+                        <h1 class="text-3xl lg:text-4xl font-bold mb-2 text-glow">LUMEN v1.0</h1>
+                        <div class="w-16 h-1 bg-white/60 rounded-full mx-auto lg:mx-0 mb-4"></div>
                     </div>
 
-                    <h2 class="text-xl lg:text-2xl font-semibold text-blue-100 text-glow">
+                    <h2 class="text-lg lg:text-xl font-semibold text-blue-100 text-glow">
                         LUMEN GENERATION
                     </h2>
-                    <h2 class="text-xl lg:text-2xl font-semibold mb-4 text-blue-100 text-glow">
+                    <h2 class="text-lg lg:text-xl font-semibold mb-3 text-blue-100 text-glow">
                         Empowering Filipinos with High-Value Skills
                     </h2>
 
-                    <p class="text-blue-100 leading-relaxed mb-8">
+                    <p class="text-blue-100 text-sm leading-relaxed mb-6">
                         Advocating for a generation of multi-skilled, competitive, and world-class Filipino workforce.
                         Building pathways to high-paying careers through in-demand skills training and development
                         opportunities.
                     </p>
 
                     <!-- Feature highlights -->
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         <div class="flex items-center text-sm text-blue-100">
                             <svg class="w-5 h-5 mr-3 text-blue-200" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
@@ -93,24 +93,24 @@
             </div>
 
             <!-- Right Section - Registration Form -->
-            <div class="w-full lg:w-1/2 p-8 lg:p-12 bg-white">
+            <div class="w-full lg:w-1/2 p-6 lg:p-8 bg-white overflow-y-auto max-h-[95vh]">
                 <div class="max-w-md mx-auto">
                     <!-- Header -->
-                    <div class="text-center lg:text-left mb-8">
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2 text-glow">Create an account</h3>
-                        <p class="text-gray-600">Enter your details below to create your account</p>
+                    <div class="text-center lg:text-left mb-5">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-1 text-glow">Create an account</h3>
+                        <p class="text-sm text-gray-600">Enter your details below to create your account</p>
                     </div>
 
                     <!-- Session Status -->
                     <x-auth-session-status class="mb-4" :status="session('status')" />
 
                     <!-- Registration Form with Flowbite components -->
-                    <form method="POST" action="{{ route('register.store') }}" class="space-y-5">
+                    <form method="POST" action="{{ route('register.store') }}" class="space-y-3">
                         @csrf
 
                         <!-- First Name Field -->
                         <div>
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">First
+                            <label for="name" class="block mb-1 text-sm font-medium text-gray-900">First
                                 Name</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -122,17 +122,17 @@
                                 </div>
                                 <input type="text" id="name" name="name" value="{{ old('name') }}" required
                                     autofocus autocomplete="name"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition duration-150 ease-in-out @error('name') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 transition duration-150 ease-in-out @error('name') border-red-500 @enderror"
                                     placeholder="First name">
                             </div>
                             @error('name')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Last Name Field -->
                         <div>
-                            <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last
+                            <label for="last_name" class="block mb-1 text-sm font-medium text-gray-900">Last
                                 Name</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -144,17 +144,17 @@
                                 </div>
                                 <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}"
                                     required autocomplete="name"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition duration-150 ease-in-out @error('last_name') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 transition duration-150 ease-in-out @error('last_name') border-red-500 @enderror"
                                     placeholder="Last name">
                             </div>
                             @error('last_name')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Email Field -->
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email
+                            <label for="email" class="block mb-1 text-sm font-medium text-gray-900">Email
                                 address</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -168,18 +168,18 @@
                                 </div>
                                 <input type="email" id="email" name="email" value="{{ old('email') }}"
                                     required autocomplete="email"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition duration-150 ease-in-out @error('email') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 transition duration-150 ease-in-out @error('email') border-red-500 @enderror"
                                     placeholder="email@example.com">
                             </div>
                             @error('email')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Password Field -->
                         <div>
                             <label for="password"
-                                class="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                                class="block mb-1 text-sm font-medium text-gray-900">Password</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
@@ -190,18 +190,18 @@
                                 </div>
                                 <input type="password" id="password" name="password" required
                                     autocomplete="new-password"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition duration-150 ease-in-out @error('password') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 transition duration-150 ease-in-out @error('password') border-red-500 @enderror"
                                     placeholder="••••••••">
                             </div>
                             @error('password')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Confirm Password Field -->
                         <div>
                             <label for="password_confirmation"
-                                class="block mb-2 text-sm font-medium text-gray-900">Confirm password</label>
+                                class="block mb-1 text-sm font-medium text-gray-900">Confirm password</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
@@ -212,20 +212,40 @@
                                 </div>
                                 <input type="password" id="password_confirmation" name="password_confirmation"
                                     required autocomplete="new-password"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition duration-150 ease-in-out"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2 transition duration-150 ease-in-out"
                                     placeholder="••••••••">
                             </div>
                         </div>
 
+                        <!-- Create note about choosing user type [Student or Instructor] -->
+                        <p class="text-xs text-gray-600">
+                            Please select your user type to access the appropriate features and resources.
+                        </p>
+
+                        <!-- Dropdown for user type selection (Student or Instructor) -->
+                        <div>
+                            <label for="user_type" class="block mb-1 text-sm font-medium text-gray-900">User
+                                Type</label>
+                            <select id="user_type" name="user_type" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 transition duration-150 ease-in-out @error('user_type') border-red-500 @enderror">
+                                <option value="" disabled selected>Select your user type</option>
+                                <option value="Student">Student</option>
+                                <option value="Instructor">Instructor</option>
+                            </select>
+                            @error('user_type')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Submit Button -->
                         <button type="submit" data-test="register-user-button"
-                            class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition duration-150 ease-in-out transform hover:scale-105">
+                            class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition duration-150 ease-in-out transform hover:scale-105">
                             Create account
                         </button>
                     </form>
 
                     <!-- Login Link -->
-                    <p class="mt-6 text-sm text-center text-gray-600">
+                    <p class="mt-4 text-sm text-center text-gray-600">
                         Already have an account?
                         <a href="{{ route('login') }}" wire:navigate
                             class="font-medium text-blue-600 hover:underline">
@@ -234,7 +254,7 @@
                     </p>
 
                     <!-- Footer -->
-                    <div class="mt-12 text-center">
+                    <div class="mt-6 text-center">
                         <p class="text-xs text-gray-500 leading-relaxed">
                             &copy; {{ date('Y') }} LUMEN Generation.<br>
                             All rights reserved. Powered by

@@ -15,10 +15,10 @@
 
                     <div>
                         <h1 class="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
-                            Training Courses
+                            Trainer Applications
                         </h1>
                         <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                            Manage training courses, duration, TESDA type, TR number, and assigned centers.
+                            Manage trainer applications and view their details.
                         </p>
                     </div>
                 </div>
@@ -27,9 +27,9 @@
 
                     {{-- Total Badge --}}
                     <div class="inline-flex w-fit items-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                        Total Courses
+                        Total Applications
                         <span class="ml-2 rounded-lg bg-slate-100 px-2 py-1 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                            {{ method_exists($courses, 'total') ? $courses->total() : count($courses) }}
+                            {{ method_exists($applicants, 'total') ? $applicants->total() : count($applicants) }}
                         </span>
                     </div>
 
@@ -43,7 +43,7 @@
 
                         <input
                             type="text"
-                            placeholder="Search course..."
+                            placeholder="Search applicants..."
                             wire:model.live.debounce.300ms="search"
                             class="block w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 sm:w-72">
 
@@ -58,15 +58,6 @@
                         </button>
                         @endif
                     </div>
-
-                    {{-- New Course --}}
-                    <a href="{{ route('training_courses.create') }}"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 dark:bg-emerald-500 dark:hover:bg-emerald-600">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        New Course
-                    </a>
                 </div>
             </div>
         </div>
@@ -111,129 +102,85 @@
                 <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
                     <tr>
                         <th class="px-5 py-3 font-semibold">#</th>
-                        <th class="px-5 py-3 font-semibold">Course</th>
-                        <th class="px-5 py-3 font-semibold">Duration</th>
-                        <th class="px-5 py-3 font-semibold">Type</th>
-                        <th class="px-5 py-3 font-semibold">TR No.</th>
-                        <th class="px-5 py-3 font-semibold">Centers</th>
+                        <th class="px-5 py-3 font-semibold">Applicant</th>
+                        <th class="px-5 py-3 font-semibold">Address</th>
+                        <th class="px-5 py-3 font-semibold">Association / Cooperation</th>
+                        <th class="px-5 py-3 font-semibold">Application Date</th>
                         <th class="px-5 py-3"></th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-slate-100 bg-white dark:divide-slate-800 dark:bg-slate-900">
-                    @forelse ($courses as $course)
-                    <tr wire:key="course-row-{{ $course->uuid }}" class="transition hover:bg-slate-50/80 dark:hover:bg-slate-800/60">
+                    @forelse ($applicants as $applicant)
+                    <tr wire:key="applicant-row-{{ $applicant->uuid }}" class="transition hover:bg-slate-50/80 dark:hover:bg-slate-800/60">
 
                         {{-- # --}}
                         <td class="px-5 py-4 align-top text-sm font-medium text-slate-400 dark:text-slate-500">
-                            {{ $loop->iteration + ($courses->currentPage() - 1) * $courses->perPage() }}
+                            {{ $loop->iteration + ($applicants->currentPage() - 1) * $applicants->perPage() }}
                         </td>
 
-                        {{-- Course --}}
+                        {{-- Applicant --}}
                         <th scope="row" class="px-5 py-4 align-top">
                             <div class="flex items-start gap-3">
                                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-indigo-100 bg-indigo-50 dark:border-indigo-900/50 dark:bg-indigo-950/40">
                                     <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300">
-                                        {{ strtoupper(substr($course->course_name ?? 'C', 0, 1)) }}
+                                        {{ strtoupper(substr($applicant->name ?? 'A', 0, 1)) }}
                                     </span>
                                 </div>
 
                                 <div class="min-w-0">
                                     <p class="truncate text-sm font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
-                                        {{ $course->course_name }}
+                                        {{ $applicant->name }}
                                     </p>
 
                                     <p class="mt-0.5 font-mono text-xs text-slate-500 dark:text-slate-400">
-                                        {{ $course->course_code }}
+                                        {{ $applicant->email }}
                                     </p>
 
-                                    @if($course->description)
-                                    <p class="mt-1 max-w-sm text-xs leading-relaxed text-slate-500 line-clamp-2 dark:text-slate-400">
-                                        {{ $course->description }}
-                                    </p>
-                                    @else
                                     <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                                        No description provided
+                                        No address provided
                                     </p>
-                                    @endif
                                 </div>
                             </div>
                         </th>
 
                         {{-- Duration --}}
                         <td class="px-5 py-4 align-top">
-                            <div class="inline-flex flex-col rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
-                                <span class="text-sm font-semibold text-slate-900 dark:text-white">
-                                    {{ number_format($course->duration_hours) }} hrs
-                                </span>
-                                <span class="text-xs text-slate-500 dark:text-slate-400">
-                                    ~{{ ceil($course->duration_hours / 40) }} weeks
-                                </span>
-                            </div>
+                            @if($applicant->address)
+                            <p class="mt-1 max-w-sm text-xs leading-relaxed text-slate-500 line-clamp-2 dark:text-slate-400">
+                                {{ $applicant->address }}
+                            </p>
+                            @else
+                            <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                                No address provided
+                            </p>
+                            @endif
                         </td>
 
-                        {{-- Type --}}
+                        {{-- Association / Cooperative --}}
                         <td class="px-5 py-4 align-top">
-                            @if($course->is_tesda_course)
-                            <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-300">
-                                <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                TESDA
-                            </span>
-                            @else
                             <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
                                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                Non-TESDA
+                                {{ $applicant->association_names ?? 'N/A' }}
                             </span>
-                            @endif
                         </td>
 
-                        {{-- TR No. --}}
+                        {{-- Application Date --}}
                         <td class="px-5 py-4 align-top">
-                            @if($course->tr_number)
-                            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                                {{ $course->tr_number }}
+                            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-xs font-semibold uppercase text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                {{ $applicant->created_at->format('Y-m-d') }}
                             </span>
-                            @else
-                            <span class="text-xs text-slate-400 dark:text-slate-500">—</span>
-                            @endif
-                        </td>
-
-                        {{-- Centers --}}
-                        <td class="px-5 py-4 align-top">
-                            @if($course->center_names)
-                            <div class="flex max-w-md flex-wrap gap-1.5">
-                                @foreach(explode(',', $course->center_names) as $center)
-                                <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-900/50 dark:bg-indigo-950/30 dark:text-indigo-300">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                    {{ trim($center) }}
-                                </span>
-                                @endforeach
-                            </div>
-                            @else
-                            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500">
-                                No center
-                            </span>
-                            @endif
                         </td>
 
                         {{-- Actions --}}
                         <td class="px-5 py-4 text-right align-top">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-                                <a href="{{ route('training_courses.requirements', $course->uuid) }}"
+                                <a href="#"
                                     class="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 dark:border-indigo-900/50 dark:bg-indigo-950/30 dark:text-indigo-300">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2.25 4H6.75A2.25 2.25 0 014.5 17.75V6.25A2.25 2.25 0 016.75 4h6.879a2.25 2.25 0 011.591.659l3.621 3.621a2.25 2.25 0 01.659 1.591v7.879A2.25 2.25 0 0117.25 20z" />
                                     </svg>
-                                    Requirements
-                                </a>
-
-                                <a href="{{ route('training_courses.show', $course->uuid) }}"
-                                    class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-300">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    View
+                                    View Application
                                 </a>
                             </div>
                         </td>
@@ -241,7 +188,7 @@
 
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-16 text-center">
+                        <td colspan="6" class="px-6 py-16 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
                                     <svg class="h-7 w-7 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,20 +198,9 @@
 
                                 <div>
                                     <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                                        No training courses found
-                                    </p>
-                                    <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                                        Try adjusting your search or create a new course.
+                                        No trainer applications found
                                     </p>
                                 </div>
-
-                                <a href="{{ route('training_courses.create') }}"
-                                    class="mt-2 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 dark:bg-emerald-500 dark:hover:bg-emerald-600">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    New Course
-                                </a>
                             </div>
                         </td>
                     </tr>
@@ -274,20 +210,20 @@
         </div>
 
         {{-- ===== PAGINATION ===== --}}
-        @if ($courses->hasPages())
+        @if ($applicants->hasPages())
         <div class="flex flex-col gap-3 border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
             <div class="text-xs text-slate-500 dark:text-slate-400">
                 Showing
-                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $courses->firstItem() }}</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $applicants->firstItem() }}</span>
                 –
-                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $courses->lastItem() }}</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $applicants->lastItem() }}</span>
                 of
-                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $courses->total() }}</span>
-                courses
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $applicants->total() }}</span>
+                applicants
             </div>
 
             <div>
-                {{ $courses->links() }}
+                {{ $applicants->links() }}
             </div>
         </div>
         @endif

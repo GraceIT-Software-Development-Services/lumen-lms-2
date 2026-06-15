@@ -1,822 +1,826 @@
 <x-layouts.app.flowbite>
-     <div class="mx-auto max-w-full">
-          <div class="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+
+     <div class="max-w-full mx-auto space-y-5">
+          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white dark:bg-slate-900 shadow-sm ring-1 ring-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800">
 
                {{-- Header --}}
-               <div class="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white px-6 py-5 dark:border-gray-800 dark:from-blue-500/10 dark:to-gray-900">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                         <div class="flex items-start gap-4">
-                              <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                                   <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                   </svg>
-                              </div>
-
-                              <div>
-                                   <h1 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                                        Learner Update
-                                   </h1>
-                                   <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        Update the learner details and personal information.
-                                   </p>
-                              </div>
+               <div class="flex flex-col gap-4 border-b border-slate-200 bg-gradient-to-br from-white via-slate-50 to-indigo-50/80 p-5 dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 sm:flex-row sm:items-center sm:justify-between md:p-6">
+                    <div class="flex items-center gap-3">
+                         <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 text-indigo-600 shadow-sm dark:border-indigo-900/60 dark:bg-indigo-950/40 dark:text-indigo-300">
+                              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                   <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
                          </div>
-
-                         <div class="flex items-start">
-                              <div class="inline-flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-2.5 text-red-700 shadow-sm dark:border-red-900/40 dark:bg-red-500/10 dark:text-red-300">
-                                   <svg class="h-4 w-4 flex-shrink-0 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                   </svg>
-                                   <div>
-                                        <p class="text-[10px] font-semibold uppercase tracking-wider text-red-400">Unique Learner Identifier</p>
-                                        <p class="font-mono text-sm font-bold tracking-widest">{{ strtoupper($learner->uli) }}</p>
-                                   </div>
-                              </div>
+                         <div>
+                              <h3 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Update {{ auth()->user()->hasRole('Trainer') ? 'Trainer' : 'Learner' }} Information</h3>
+                              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                   Update the details of
+                                   <span class="font-semibold text-slate-700 dark:text-slate-200">
+                                        {{ $learner->name }} {{ $learner->last_name }}
+                                   </span>
+                              </p>
                          </div>
                     </div>
+
+                    @if (auth()->user()->hasRole('Student'))
+                    <div class="inline-flex self-start items-center gap-1.5 rounded-full border border-indigo-100 bg-white dark:bg-slate-900 px-3 py-1.5 shadow-sm dark:border-indigo-900/60 dark:bg-slate-950 sm:self-center">
+                         <svg class="h-3.5 w-3.5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+                         </svg>
+                         <span class="text-xs font-medium text-slate-500 dark:text-slate-400">ULI:</span>
+                         <span class="font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-300">{{ $learner->uli ?: '—' }}</span>
+                    </div>
+                    @endif
                </div>
 
-               {{-- Alerts --}}
+               {{-- Flash Messages --}}
                @if(session('success'))
-               <div class="mx-6 mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-500/10 dark:text-emerald-300">
-                    {{ session('success') }}
-               </div>
+               <div class="m-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300 md:m-5" role="alert">{{ session('success') }}</div>
                @endif
-
                @if(session('error'))
-               <div class="mx-6 mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-sm dark:border-red-900/40 dark:bg-red-500/10 dark:text-red-300">
-                    {{ session('error') }}
-               </div>
+               <div class="m-4 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300 md:m-5" role="alert">{{ session('error') }}</div>
                @endif
 
-               <form action="{{ route('learners.update', $learner->uuid) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+               <form action="{{ route('learners.update', $learner->uuid) }}" method="POST" enctype="multipart/form-data" class="space-y-5 bg-slate-50/70 p-4 dark:bg-slate-950/60 md:p-6">
+
                     @csrf
                     @method('PUT')
 
+                    {{-- Hidden container: collects IDs of documents removed from DOM --}}
                     <div id="deleted-document-ids-container"></div>
 
-                    {{-- Basic Information --}}
-                    <div class="px-6 pt-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-blue-500"></div>
+                    {{-- ULI --}}
+                    @if (auth()->user()->hasRole('Student'))
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="uli">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Unique Learner Identifier</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                               <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Basic Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Client profile and photo information</p>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                        Unique Learner Identifier <span class="text-rose-500">*</span>
+                                   </label>
+                                   <input type="text" name="uli" value="{{ old('uli', $learner->uli) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('uli') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Enter unique learner identifier">
+                                   @error('uli')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
                          </div>
+                    </div>
+                    @endif
 
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    {{-- Other Information --}}
+                    @if (auth()->user()->hasRole('Trainer') || auth()->user()->hasRole('Student'))
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Other Information</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Client Type</label>
-                                   <select name="client_type" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Client Type</label>
+                                   <select name="clientType" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                         <option value="">Select client type</option>
-                                        <option value="tvet_graduating_student" @selected(old('client_type', $learner->client_type) === 'tvet_graduating_student')>TVET Graduating Student</option>
-                                        <option value="tvet_graduate" @selected(old('client_type', $learner->client_type) === 'tvet_graduate')>TVET Graduate</option>
-                                        <option value="industry_worker" @selected(old('client_type', $learner->client_type) === 'industry_worker')>Industry Worker</option>
-                                        <option value="k12" @selected(old('client_type', $learner->client_type) === 'k12')>K12</option>
-                                        <option value="owf" @selected(old('client_type', $learner->client_type) === 'owf')>OWF</option>
+                                        <option value="Industry Worker" @selected(old('clientType', $learner->client_type) === 'Industry Worker')>Industry Worker</option>
+                                        <option value="Student" @selected(old('clientType', $learner->client_type) === 'Student')>Student</option>
+                                        <option value="Cooperative" @selected(old('clientType', $learner->client_type) === 'Cooperative')>Cooperative</option>
+                                        <option value="Association" @selected(old('clientType', $learner->client_type) === 'Association')>Association</option>
+                                        <option value="Graduate" @selected(old('clientType', $learner->client_type) === 'Graduate')>Graduate</option>
                                    </select>
-                                   @error('client_type')<p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                                   @error('clientType')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
 
-                              <div class="md:col-span-2">
-                                   <label for="picture" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Picture</label>
+                              @if (auth()->user()->hasRole('Trainer'))
+                              <div data-section="association">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Association / Cooperative</label>
+                                   <select name="association_ids[]" multiple class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <option value="">Select association / cooperative</option>
+                                        @foreach ($associations as $association)
+                                        <option value="{{ $association->id }}" {{ $user_associations->contains('association_id', $association->id) ? 'selected' : '' }}>
+                                             {{ $association->name }}
+                                        </option>
+                                        @endforeach
+                                   </select>
+                                   @error('association_ids')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
+                              </div>
+                              @endif
+
+                              <div class="md:col-span-3">
+                                   <label for="picture" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Profile Picture</label>
                                    <input type="file" id="picture" name="picture" accept="image/*"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-blue-700 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                        class="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white dark:bg-slate-900 text-sm text-slate-600 shadow-sm outline-none transition file:mr-4 file:border-0 file:bg-slate-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:file:bg-slate-800 dark:file:text-slate-200 dark:hover:file:bg-slate-700 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         onchange="previewPicture(this)">
 
-                                   <div id="picture-preview" class="mt-3 {{ $learner->picture_path ? '' : 'hidden' }}">
-                                        @if($learner->picture_path)
-                                        <img id="picture-preview-img"
-                                             src="{{ Storage::disk('s3')->temporaryUrl($learner->picture_path, now()->addMinutes(5)) }}"
-                                             class="h-20 w-20 rounded-2xl border border-gray-200 object-cover shadow-sm dark:border-gray-700">
-                                        <p id="picture-preview-label" class="mt-1 text-xs text-gray-500 dark:text-gray-400">Current photo</p>
-                                        @else
-                                        <img id="picture-preview-img" src="" class="hidden h-20 w-20 rounded-2xl border border-gray-200 object-cover shadow-sm dark:border-gray-700">
-                                        <p id="picture-preview-label" class="mt-1 hidden text-xs text-gray-500 dark:text-gray-400"></p>
-                                        @endif
+                                   {{-- Current picture from S3 --}}
+                                   @if($learner->picture_path)
+                                   <div id="current-picture" class="mt-3 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
+                                        <img src="{{ Storage::disk('s3')->temporaryUrl($learner->picture_path, now()->addMinutes(5)) }}"
+                                             class="h-20 w-20 rounded-2xl border border-slate-200 object-cover shadow-sm dark:border-slate-700">
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Current picture — upload a new one to replace</p>
                                    </div>
-                                   @error('picture')<p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                                   @endif
+
+                                   {{-- Preview of newly selected picture --}}
+                                   <div id="picture-preview" class="mt-2 hidden">
+                                        <img id="picture-preview-img" src="" class="h-20 w-20 rounded-2xl border border-slate-200 object-cover shadow-sm dark:border-slate-700">
+                                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">New photo selected (not yet saved)</p>
+                                   </div>
+
+                                   @error('picture')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
+                              </div>
+                         </div>
+                    </div>
+                    @endif
+
+                    {{-- Basic Information --}}
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="basic">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Basic Information</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                              <div>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">First Name <span class="text-rose-500">*</span></label>
+                                   <input type="text" name="firstName" value="{{ old('firstName', $learner->name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('firstName') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Enter first name">
+                                   @error('firstName')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
+                              </div>
+                              <div>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Middle Name</label>
+                                   <input type="text" name="middleName" value="{{ old('middleName', $learner->middle_name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Enter middle name">
+                              </div>
+                              <div>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Last Name <span class="text-rose-500">*</span></label>
+                                   <input type="text" name="lastName" value="{{ old('lastName', $learner->last_name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('lastName') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Enter last name">
+                                   @error('lastName')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
+                              </div>
+                              <div>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Suffix</label>
+                                   <input type="text" name="suffix" value="{{ old('suffix', $learner->extension) }}" maxlength="10" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Jr., Sr., III, etc.">
                               </div>
                          </div>
                     </div>
 
                     {{-- School Information --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-emerald-500"></div>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="school">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">School Information</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">School Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">School name and location details</p>
-                              </div>
-                         </div>
-
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                              <div>
-                                   <label for="school_name" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">School Name</label>
-                                   <input type="text" id="school_name" name="school_name"
-                                        value="{{ old('school_name', $learner->school_name) }}"
-                                        class="block w-full rounded-2xl border @error('school_name') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">School Name</label>
+                                   <input type="text" name="schoolName" value="{{ old('schoolName', $learner->school_name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('schoolName') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="e.g. XYZ Technical School">
-                                   @error('school_name')<p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                                   @error('schoolName')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label for="school_address" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">School Address</label>
-                                   <textarea id="school_address" name="school_address" rows="1"
-                                        class="block w-full rounded-2xl border @error('school_address') border-red-500 @else border-gray-200 dark:border-gray-700 @enderror bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:bg-gray-800 dark:text-white"
-                                        placeholder="Complete school address">{{ old('school_address', $learner->school_address) }}</textarea>
-                                   @error('school_address')<p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">School Address</label>
+                                   <textarea name="schoolAddress" rows="1" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('schoolAddress') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Complete school address">{{ old('schoolAddress', $learner->school_address) }}</textarea>
+                                   @error('schoolAddress')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
                          </div>
                     </div>
 
                     {{-- Personal Information --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-violet-500"></div>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="personal">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Personal Information</h2>
+                         <p class="mb-4 inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-500 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700">
+                              <svg class="h-4 w-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                                   <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                              </svg>
+                              Personal information is encrypted and stored securely
+                         </p>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Personal Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Protected personal profile details</p>
-                              </div>
-                         </div>
-
-                         <div class="mb-4 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-xs text-violet-700 dark:border-violet-900/40 dark:bg-violet-500/10 dark:text-violet-300">
-                              Personal information is encrypted and stored securely.
-                         </div>
-
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Sex</label>
-                                   <select name="sex" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Sex <span class="text-rose-500">*</span></label>
+                                   <select name="sex" class="block w-full rounded-xl border @error('sex') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                         <option value="">Select sex</option>
                                         <option value="male" @selected(old('sex', $learner->sex) === 'male')>Male</option>
                                         <option value="female" @selected(old('sex', $learner->sex) === 'female')>Female</option>
                                    </select>
+                                   @error('sex')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Civil Status</label>
-                                   <select name="civil_status" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Civil Status <span class="text-rose-500">*</span></label>
+                                   <select name="civilStatus" class="block w-full rounded-xl border @error('civilStatus') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                         <option value="">Select civil status</option>
-                                        <option value="single" @selected(old('civil_status', $learner->civil_status) === 'single')>Single</option>
-                                        <option value="married" @selected(old('civil_status', $learner->civil_status) === 'married')>Married</option>
-                                        <option value="widow" @selected(old('civil_status', $learner->civil_status) === 'widow')>Widow</option>
-                                        <option value="separated" @selected(old('civil_status', $learner->civil_status) === 'separated')>Separated</option>
+                                        <option value="single" @selected(old('civilStatus', $learner->civil_status) === 'single')>Single</option>
+                                        <option value="married" @selected(old('civilStatus', $learner->civil_status) === 'married')>Married</option>
+                                        <option value="widow" @selected(old('civilStatus', $learner->civil_status) === 'widow')>Widow</option>
+                                        <option value="separated" @selected(old('civilStatus', $learner->civil_status) === 'separated')>Separated</option>
                                    </select>
+                                   @error('civilStatus')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Date of Birth</label>
-                                   <input type="date" name="birth_date"
-                                        value="{{ old('birth_date', $learner->birth_date) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Date of Birth <span class="text-rose-500">*</span></label>
+                                   <input type="date" name="birthDate" value="{{ old('birthDate', $learner->birth_date) }}"
+                                        class="block w-full rounded-xl border @error('birthDate') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                   @error('birthDate')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Place of Birth</label>
-                                   <input type="text" name="birth_place"
-                                        value="{{ old('birth_place', $learner->birth_place) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Place of Birth</label>
+                                   <input type="text" name="birthPlace" value="{{ old('birthPlace', $learner->birth_place) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="City/Municipality, Province">
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Mother's Name</label>
-                                   <input type="text" name="mother_name"
-                                        value="{{ old('mother_name', $learner->mother_name) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Mother's Name</label>
+                                   <input type="text" name="motherName" value="{{ old('motherName', $learner->mother_name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="Full name">
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Father's Name</label>
-                                   <input type="text" name="father_name"
-                                        value="{{ old('father_name', $learner->father_name) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-violet-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Father's Name</label>
+                                   <input type="text" name="fatherName" value="{{ old('fatherName', $learner->father_name) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="Full name">
                               </div>
                          </div>
                     </div>
 
                     {{-- Address Information --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-amber-500"></div>
-                              <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Address Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Residential location details</p>
-                              </div>
-                         </div>
-
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="address">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Address Information</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                               <div class="md:col-span-3">
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">House/Block/Lot No., Street</label>
-                                   <input type="text" name="address_number_street"
-                                        value="{{ old('address_number_street', $learner->address_number_street) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">House/Block/Lot No., Street</label>
+                                   <input type="text" name="addressNumberStreet" value="{{ old('addressNumberStreet', $learner->address_number_street) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="e.g. Block 5 Lot 12, Main Street">
                               </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Barangay</label>
-                                   <input type="text" name="address_barangay" value="{{ old('address_barangay', $learner->address_barangay) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="Barangay name">
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">District</label>
-                                   <input type="text" name="address_district" value="{{ old('address_district', $learner->address_district) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="District">
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">City/Municipality</label>
-                                   <input type="text" name="address_city" value="{{ old('address_city', $learner->address_city) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="City">
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Province</label>
-                                   <input type="text" name="address_province" value="{{ old('address_province', $learner->address_province) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="Province">
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Region</label>
-                                   <input type="text" name="address_region" value="{{ old('address_region', $learner->address_region) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="Region">
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">ZIP Code</label>
-                                   <input type="text" name="address_zip_code" maxlength="10" value="{{ old('address_zip_code', $learner->address_zip_code) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="ZIP Code">
-                              </div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Barangay</label><input type="text" name="addressBarangay" value="{{ old('addressBarangay', $learner->address_barangay) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="Barangay name"></div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">District</label><input type="text" name="addressDistrict" value="{{ old('addressDistrict', $learner->address_district) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="District"></div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">City/Municipality</label><input type="text" name="addressCity" value="{{ old('addressCity', $learner->address_city) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="City"></div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Province</label><input type="text" name="addressProvince" value="{{ old('addressProvince', $learner->address_province) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="Province"></div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Region</label><input type="text" name="addressRegion" value="{{ old('addressRegion', $learner->address_region) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="Region"></div>
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">ZIP Code</label><input type="text" name="addressZipCode" value="{{ old('addressZipCode', $learner->address_zip_code) }}" maxlength="10" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="ZIP Code"></div>
                          </div>
                     </div>
 
                     {{-- Contact Information --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-rose-500"></div>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="contact">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Contact Information</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Contact Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Reachability and communication channels</p>
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Mobile Number <span class="text-rose-500">*</span></label>
+                                   <input type="tel" name="contactMobile" value="{{ old('contactMobile', $learner->contact_mobile) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('contactMobile') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="e.g. +639123456789">
+                                   @error('contactMobile')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-                         </div>
-
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                              <div><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Telephone</label><input type="tel" name="contactTel" value="{{ old('contactTel', $learner->contact_tel) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="e.g. (02) 1234-5678"></div>
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Mobile Number</label>
-                                   <input type="tel" name="contact_mobile" value="{{ old('contact_mobile', $learner->contact_mobile) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="e.g. +639123456789">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Email Address</label>
+                                   <input type="email" name="contactEmail" value="{{ old('contactEmail', $learner->contact_email) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border @error('contactEmail') border-rose-400 ring-4 ring-rose-50 dark:ring-rose-950/40 @else border-slate-200 dark:border-slate-700 @enderror bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="email@example.com">
+                                   @error('contactEmail')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Telephone</label>
-                                   <input type="tel" name="contact_tel" value="{{ old('contact_tel', $learner->contact_tel) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="e.g. (02) 1234-5678">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Fax Number</label>
+                                   <input type="tel" name="contactFax" value="{{ old('contactFax', $learner->contact_fax) }}" autocomplete="off"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
+                                        placeholder="Fax number">
                               </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
-                                   <input type="email" name="contact_email" value="{{ old('contact_email', $learner->contact_email ?? $learner->email) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="email@example.com">
-                                   @error('contact_email')<p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
-                              </div>
-
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Fax Number</label>
-                                   <input type="tel" name="contact_fax" value="{{ old('contact_fax', $learner->contact_fax) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="Fax number">
-                              </div>
-
-                              <div class="md:col-span-2">
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Other Contact Information</label>
-                                   <input type="text" name="contact_others" value="{{ old('contact_others', $learner->contact_others) }}" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-rose-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white" placeholder="Other contact details">
-                              </div>
+                              <div class="md:col-span-2"><label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Other Contact Information</label><input type="text" name="contactOthers" value="{{ old('contactOthers', $learner->contact_others) }}" autocomplete="off" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40" placeholder="Other contact details"></div>
                          </div>
                     </div>
 
                     {{-- Educational Background --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-teal-500"></div>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="education">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Educational Background</h2>
+                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                               <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Educational Background</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Academic attainment information</p>
-                              </div>
-                         </div>
-
-                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                              <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Highest Educational Attainment</label>
-                                   <select name="educational_attainment" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-teal-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Highest Educational Attainment</label>
+                                   <select name="educationalAttainment" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                         <option value="">Select educational attainment</option>
-                                        <option value="elementary_graduate" @selected(old('educational_attainment', $learner->educational_attainment) === 'elementary_graduate')>Elementary Graduate</option>
-                                        <option value="high_school_graduate" @selected(old('educational_attainment', $learner->educational_attainment) === 'high_school_graduate')>High School Graduate</option>
-                                        <option value="tvet_graduate" @selected(old('educational_attainment', $learner->educational_attainment) === 'tvet_graduate')>TVET Graduate</option>
-                                        <option value="college_level" @selected(old('educational_attainment', $learner->educational_attainment) === 'college_level')>College Level</option>
-                                        <option value="college_graduate" @selected(old('educational_attainment', $learner->educational_attainment) === 'college_graduate')>College Graduate</option>
-                                        <option value="others" @selected(old('educational_attainment', $learner->educational_attainment) === 'others')>Others</option>
+                                        <option value="elementary_graduate" @selected(old('educationalAttainment', $learner->educational_attainment) === 'elementary_graduate')>Elementary Graduate</option>
+                                        <option value="high_school_graduate" @selected(old('educationalAttainment', $learner->educational_attainment) === 'high_school_graduate')>High School Graduate</option>
+                                        <option value="tvet_graduate" @selected(old('educationalAttainment', $learner->educational_attainment) === 'tvet_graduate')>TVET Graduate</option>
+                                        <option value="college_level" @selected(old('educationalAttainment', $learner->educational_attainment) === 'college_level')>College Level</option>
+                                        <option value="college_graduate" @selected(old('educationalAttainment', $learner->educational_attainment) === 'college_graduate')>College Graduate</option>
+                                        <option value="others" @selected(old('educationalAttainment', $learner->educational_attainment) === 'others')>Others</option>
                                    </select>
+                                   @error('educationalAttainment')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                               </div>
-
                               <div>
-                                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">If Others, Please Specify</label>
-                                   <input type="text" name="educational_attainment_others"
-                                        value="{{ old('educational_attainment_others', $learner->educational_attainment_others) }}"
-                                        class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-teal-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                   <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">If Others, Please Specify</label>
+                                   <input type="text" name="educationalAttainmentOthers" value="{{ old('educationalAttainmentOthers', $learner->educational_attainment_others) }}"
+                                        class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"
                                         placeholder="Specify other educational attainment">
                               </div>
                          </div>
                     </div>
 
                     {{-- Employment Information --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center gap-3">
-                              <div class="h-8 w-1 rounded-full bg-cyan-500"></div>
-                              <div>
-                                   <h2 class="text-base font-semibold text-gray-900 dark:text-white">Employment Information</h2>
-                                   <p class="text-sm text-gray-500 dark:text-gray-400">Current work status</p>
-                              </div>
-                         </div>
-
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="employment">
+                         <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Employment Information</h2>
                          <div>
-                              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Employment Status</label>
-                              <select name="employment_status" class="block w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-cyan-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-cyan-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                              <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Employment Status</label>
+                              <select name="employmentStatus" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                    <option value="">Select employment status</option>
-                                   <option value="casual" @selected(old('employment_status', $learner->employment_status) === 'casual')>Casual</option>
-                                   <option value="job_order" @selected(old('employment_status', $learner->employment_status) === 'job_order')>Job Order</option>
-                                   <option value="probationary" @selected(old('employment_status', $learner->employment_status) === 'probationary')>Probationary</option>
-                                   <option value="permanent" @selected(old('employment_status', $learner->employment_status) === 'permanent')>Permanent</option>
-                                   <option value="self_employed" @selected(old('employment_status', $learner->employment_status) === 'self_employed')>Self-Employed</option>
-                                   <option value="ofw" @selected(old('employment_status', $learner->employment_status) === 'ofw')>OFW</option>
+                                   <option value="casual" @selected(old('employmentStatus', $learner->employment_status) === 'casual')>Casual</option>
+                                   <option value="job_order" @selected(old('employmentStatus', $learner->employment_status) === 'job_order')>Job Order</option>
+                                   <option value="probationary" @selected(old('employmentStatus', $learner->employment_status) === 'probationary')>Probationary</option>
+                                   <option value="permanent" @selected(old('employmentStatus', $learner->employment_status) === 'permanent')>Permanent</option>
+                                   <option value="self_employed" @selected(old('employmentStatus', $learner->employment_status) === 'self_employed')>Self-Employed</option>
+                                   <option value="ofw" @selected(old('employmentStatus', $learner->employment_status) === 'ofw')>OFW</option>
                               </select>
+                              @error('employmentStatus')<p class="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{{ $message }}</p>@enderror
                          </div>
                     </div>
 
                     {{-- Work Experiences --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-3">
-                                   <div class="h-8 w-1 rounded-full bg-indigo-500"></div>
-                                   <div>
-                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Work Experiences</h2>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Professional history and responsibilities</p>
-                                   </div>
-                              </div>
-
-                              <button type="button" onclick="addWorkExperience()"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700">
-                                   + Add Work Experience
-                              </button>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="work-exp">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Work Experiences</h2>
+                              <button type="button" onclick="addWorkExperience()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Work Experience</button>
                          </div>
-
-                         <div id="work-experiences-container" data-count="{{ count($workExperiences) }}" class="space-y-4">
+                         <div id="work-experiences-container" data-count="{{ count($workExperiences) }}" class="space-y-3">
                               @forelse($workExperiences as $index => $experience)
-                              <div class="work-experience-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                                   <div class="mb-3 flex items-center justify-between">
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Work Experience #<span class="item-number">{{ $index + 1 }}</span></h4>
-                                        <button type="button" onclick="removeItem(this,'work-experiences-container','.work-experience-item','Work Experience')" class="text-red-600 hover:text-red-800">
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 work-experience-item">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Work Experience #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeItem(this,'work-experiences-container','.work-experience-item','Work Experience')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
                                              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                              </svg>
                                         </button>
                                    </div>
-
-                                   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <input type="text" name="work_experiences[{{ $index }}][company]" value="{{ $experience['company'] ?? '' }}" placeholder="Company Name" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="work_experiences[{{ $index }}][position]" value="{{ $experience['position'] ?? '' }}" placeholder="Position" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="work_experiences[{{ $index }}][duration]" value="{{ $experience['duration'] ?? '' }}" placeholder="Duration (e.g., 2020-2023)" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <textarea name="work_experiences[{{ $index }}][responsibilities]" placeholder="Responsibilities" rows="2" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">{{ $experience['responsibilities'] ?? '' }}</textarea>
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <input type="text" name="work_experiences[{{ $index }}][company]" value="{{ $experience['company'] ?? '' }}" placeholder="Company Name" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="work_experiences[{{ $index }}][position]" value="{{ $experience['position'] ?? '' }}" placeholder="Position" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="work_experiences[{{ $index }}][duration]" value="{{ $experience['duration'] ?? '' }}" placeholder="Duration (e.g., 2020-2023)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <textarea name="work_experiences[{{ $index }}][responsibilities]" placeholder="Responsibilities" rows="2" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">{{ $experience['responsibilities'] ?? '' }}</textarea>
                                    </div>
                               </div>
                               @empty
-                              <p class="empty-notice py-4 text-center text-sm text-gray-500">No work experiences added yet.</p>
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No work experiences added yet.</p>
                               @endforelse
                          </div>
                     </div>
 
                     {{-- Trainings --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-3">
-                                   <div class="h-8 w-1 rounded-full bg-emerald-500"></div>
-                                   <div>
-                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Training/Seminars Attended</h2>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Previous seminars and training records</p>
-                                   </div>
-                              </div>
-
-                              <button type="button" onclick="addTraining()"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700">
-                                   + Add Training
-                              </button>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="trainings">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Training/Seminars Attended</h2>
+                              <button type="button" onclick="addTraining()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Training</button>
                          </div>
-
-                         <div id="trainings-container" data-count="{{ count($trainings) }}" class="space-y-4">
+                         <div id="trainings-container" data-count="{{ count($trainings) }}" class="space-y-3">
                               @forelse($trainings as $index => $training)
-                              <div class="training-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                                   <div class="mb-3 flex items-center justify-between">
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Training #<span class="item-number">{{ $index + 1 }}</span></h4>
-                                        <button type="button" onclick="removeItem(this,'trainings-container','.training-item','Training')" class="text-red-600 hover:text-red-800">
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 training-item">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Training #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeItem(this,'trainings-container','.training-item','Training')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
                                              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                              </svg>
                                         </button>
                                    </div>
-
-                                   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <input type="text" name="trainings[{{ $index }}][title]" value="{{ $training['title'] ?? '' }}" placeholder="Training Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="trainings[{{ $index }}][provider]" value="{{ $training['provider'] ?? '' }}" placeholder="Training Provider" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="trainings[{{ $index }}][date]" value="{{ $training['date'] ?? '' }}" placeholder="Date (e.g., January 2023)" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="trainings[{{ $index }}][hours]" value="{{ $training['hours'] ?? '' }}" placeholder="Number of Hours" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <input type="text" name="trainings[{{ $index }}][title]" value="{{ $training['title'] ?? '' }}" placeholder="Training Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="trainings[{{ $index }}][provider]" value="{{ $training['provider'] ?? '' }}" placeholder="Training Provider" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="trainings[{{ $index }}][date]" value="{{ $training['date'] ?? '' }}" placeholder="Date (e.g., January 2023)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="trainings[{{ $index }}][hours]" value="{{ $training['hours'] ?? '' }}" placeholder="Number of Hours" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                    </div>
                               </div>
                               @empty
-                              <p class="empty-notice py-4 text-center text-sm text-gray-500">No trainings added yet.</p>
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No trainings added yet.</p>
                               @endforelse
                          </div>
                     </div>
 
                     {{-- Licensure Examinations --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-3">
-                                   <div class="h-8 w-1 rounded-full bg-violet-500"></div>
-                                   <div>
-                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Licensure Examinations</h2>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Professional exam credentials</p>
-                                   </div>
-                              </div>
-
-                              <button type="button" onclick="addLicensure()"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700">
-                                   + Add Licensure
-                              </button>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="licensure">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Licensure Examinations</h2>
+                              <button type="button" onclick="addLicensure()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Licensure</button>
                          </div>
-
-                         <div id="licensure-container" data-count="{{ count($licensureExamination) }}" class="space-y-4">
+                         <div id="licensure-container" data-count="{{ count($licensureExamination) }}" class="space-y-3">
                               @forelse($licensureExamination as $index => $licensure)
-                              <div class="licensure-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                                   <div class="mb-3 flex items-center justify-between">
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Licensure #<span class="item-number">{{ $index + 1 }}</span></h4>
-                                        <button type="button" onclick="removeItem(this,'licensure-container','.licensure-item','Licensure')" class="text-red-600 hover:text-red-800">
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 licensure-item">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Licensure #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeItem(this,'licensure-container','.licensure-item','Licensure')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
                                              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                              </svg>
                                         </button>
                                    </div>
-
-                                   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <input type="text" name="licensure_examination[{{ $index }}][title]" value="{{ $licensure['title'] ?? '' }}" placeholder="Examination Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="licensure_examination[{{ $index }}][license_number]" value="{{ $licensure['license_number'] ?? '' }}" placeholder="License Number" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="licensure_examination[{{ $index }}][date_taken]" value="{{ $licensure['date_taken'] ?? '' }}" placeholder="Date Taken" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="licensure_examination[{{ $index }}][validity]" value="{{ $licensure['validity'] ?? '' }}" placeholder="Validity Period" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <input type="text" name="licensure_examination[{{ $index }}][title]" value="{{ $licensure['title'] ?? '' }}" placeholder="Examination Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="licensure_examination[{{ $index }}][license_number]" value="{{ $licensure['license_number'] ?? '' }}" placeholder="License Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="licensure_examination[{{ $index }}][date_taken]" value="{{ $licensure['date_taken'] ?? '' }}" placeholder="Date Taken" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="licensure_examination[{{ $index }}][validity]" value="{{ $licensure['validity'] ?? '' }}" placeholder="Validity Period" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                    </div>
                               </div>
                               @empty
-                              <p class="empty-notice py-4 text-center text-sm text-gray-500">No licensure examinations added yet.</p>
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No licensure examinations added yet.</p>
                               @endforelse
                          </div>
                     </div>
 
                     {{-- Competency Assessments --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-3">
-                                   <div class="h-8 w-1 rounded-full bg-amber-500"></div>
-                                   <div>
-                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Competency Assessments</h2>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Qualification and certification records</p>
-                                   </div>
-                              </div>
-
-                              <button type="button" onclick="addCompetency()"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700">
-                                   + Add Assessment
-                              </button>
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="competency">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Competency Assessments</h2>
+                              <button type="button" onclick="addCompetency()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Assessment</button>
                          </div>
-
-                         <div id="competency-container" data-count="{{ count($competencyAssessment) }}" class="space-y-4">
+                         <div id="competency-container" data-count="{{ count($competencyAssessment) }}" class="space-y-3">
                               @forelse($competencyAssessment as $index => $competency)
-                              <div class="competency-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                                   <div class="mb-3 flex items-center justify-between">
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Assessment #<span class="item-number">{{ $index + 1 }}</span></h4>
-                                        <button type="button" onclick="removeItem(this,'competency-container','.competency-item','Assessment')" class="text-red-600 hover:text-red-800">
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 competency-item">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Assessment #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeItem(this,'competency-container','.competency-item','Assessment')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
                                              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                              </svg>
                                         </button>
                                    </div>
-
-                                   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <input type="text" name="competency_assessment[{{ $index }}][qualification]" value="{{ $competency['qualification'] ?? '' }}" placeholder="Qualification Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="competency_assessment[{{ $index }}][certificate_number]" value="{{ $competency['certificate_number'] ?? '' }}" placeholder="Certificate Number" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="competency_assessment[{{ $index }}][date_issued]" value="{{ $competency['date_issued'] ?? '' }}" placeholder="Date Issued" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                        <input type="text" name="competency_assessment[{{ $index }}][expiry_date]" value="{{ $competency['expiry_date'] ?? '' }}" placeholder="Expiry Date" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <input type="text" name="competency_assessment[{{ $index }}][qualification]" value="{{ $competency['qualification'] ?? '' }}" placeholder="Qualification Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="competency_assessment[{{ $index }}][certificate_number]" value="{{ $competency['certificate_number'] ?? '' }}" placeholder="Certificate Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="competency_assessment[{{ $index }}][date_issued]" value="{{ $competency['date_issued'] ?? '' }}" placeholder="Date Issued" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="competency_assessment[{{ $index }}][expiry_date]" value="{{ $competency['expiry_date'] ?? '' }}" placeholder="Expiry Date" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
                                    </div>
                               </div>
                               @empty
-                              <p class="empty-notice py-4 text-center text-sm text-gray-500">No competency assessments added yet.</p>
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No competency assessments added yet.</p>
                               @endforelse
                          </div>
                     </div>
 
-                    {{-- Documents --}}
-                    <div class="px-6">
-                         <div class="mb-4 flex items-center justify-between gap-3">
-                              <div class="flex items-center gap-3">
-                                   <div class="h-8 w-1 rounded-full bg-sky-500"></div>
-                                   <div>
-                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Documents</h2>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Uploaded files and supporting documents</p>
-                                   </div>
-                              </div>
-
-                              <button type="button" onclick="addDocument()"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700">
-                                   + Add Document
-                              </button>
+                    {{-- Nttc --}}
+                    @if (auth()->user()->hasRole('Trainer'))
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="nttc">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Nttc</h2>
+                              <button type="button" onclick="addNttc()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Nttc</button>
                          </div>
-
-                         <div id="documents-container" data-count="{{ count($documents) }}" class="space-y-4">
-                              @forelse($documents as $index => $document)
-                              <div class="document-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60" data-doc-id="{{ $document['id'] }}">
-                                   <div class="mb-3 flex items-center justify-between">
-                                        <h4 class="font-medium text-gray-900 dark:text-white">Document #<span class="item-number">{{ $index + 1 }}</span></h4>
-                                        <button type="button" onclick="removeDocument(this)" class="text-red-600 hover:text-red-800">
+                         <div id="nttc-container" data-count="{{ count($nttc) }}" class="space-y-3">
+                              @forelse($nttc as $index => $nttcItem)
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 nttc-item">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Nttc #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeItem(this,'nttc-container','.nttc-item','Nttc')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
                                              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                                              </svg>
                                         </button>
                                    </div>
-
-                                   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <input type="hidden" name="documents[{{ $index }}][id]" value="{{ $document['id'] }}">
-
-                                        <select name="documents[{{ $index }}][type]" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                                             <option value="">Select document type</option>
-                                             @foreach(\App\Enums\DocumentTypeEnum::cases() as $type)
-                                             <option value="{{ $type->value }}" @selected($document['type']===$type->value)>
-                                                  {{ str_replace('_', ' ', $type->name) }}
-                                             </option>
-                                             @endforeach
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <select name="nttc[{{ $index }}][level]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                             <option value="">Select Level</option>
+                                             <option value="Level I" {{ ($nttcItem['level'] ?? '') === 'Level I' ? 'selected' : '' }}>Level I</option>
+                                             <option value="Level II" {{ ($nttcItem['level'] ?? '') === 'Level II' ? 'selected' : '' }}>Level II</option>
+                                             <option value="Level III" {{ ($nttcItem['level'] ?? '') === 'Level III' ? 'selected' : '' }}>Level III</option>
+                                             <option value="Level IV" {{ ($nttcItem['level'] ?? '') === 'Level IV' ? 'selected' : '' }}>Level IV</option>
                                         </select>
+                                        <input type="text" name="nttc[{{ $index }}][competency]" value="{{ $nttcItem['competency'] ?? '' }}" placeholder="Competency (e.g. Cookery NC II)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="text" name="nttc[{{ $index }}][certificate_number]" value="{{ $nttcItem['certificate_number'] ?? '' }}" placeholder="Certificate Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="date" name="nttc[{{ $index }}][issued_on]" value="{{ $nttcItem['issued_on'] ?? '' }}" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="date" name="nttc[{{ $index }}][valid_until]" value="{{ $nttcItem['valid_until'] ?? '' }}" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        <input type="file" name="nttc[{{ $index }}][file]" class="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white dark:bg-slate-900 text-sm text-slate-600 shadow-sm outline-none transition file:mr-4 file:border-0 file:bg-indigo-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:file:bg-indigo-950/50 dark:file:text-indigo-300 dark:hover:file:bg-indigo-900/60 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
 
-                                        <input type="file" name="documents[{{ $index }}][file]"
-                                             class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-
-                                        @if(!empty($document['file']))
-                                        <div class="md:col-span-2 flex items-center gap-2">
-                                             <svg class="h-4 w-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                                  <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                                        @if(!empty($nttcItem['file_path']))
+                                        <div class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white dark:bg-slate-900 p-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 md:col-span-2">
+                                             <svg class="h-4 w-4 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                              </svg>
-                                             <a href="{{ Storage::disk('s3')->temporaryUrl($document['file'], now()->addMinute(1)) }}"
-                                                  target="_blank"
-                                                  class="truncate text-sm text-blue-600 hover:underline">
-                                                  {{ basename($document['file']) }}
+                                             <a href="{{ Storage::disk('s3')->temporaryUrl($nttcItem['file_path'], now()->addMinutes(10)) }}" target="_blank" class="flex-1 truncate text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-300">
+                                                  {{ basename($nttcItem['file_path']) }}
                                              </a>
                                         </div>
                                         @endif
                                    </div>
                               </div>
                               @empty
-                              <p class="empty-notice py-4 text-center text-sm text-gray-500">No documents added yet.</p>
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No competency assessments added yet.</p>
+                              @endforelse
+                         </div>
+                    </div>
+                    @endif
+
+                    {{-- Documents --}}
+                    <div class="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 shadow-sm ring-1 ring-slate-100/70 dark:border-slate-800 dark:bg-slate-900 dark:ring-slate-800/70" data-section="documents">
+                         <div class="flex items-center justify-between mb-4">
+                              <h2 class="text-sm font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Documents</h2>
+                              <button type="button" onclick="addDocument()" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/40">+ Add Document</button>
+                         </div>
+                         <div id="documents-container" data-count="{{ count($documents) }}" class="space-y-3">
+                              @forelse($documents as $index => $document)
+                              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 document-item" data-doc-id="{{ $document->id }}">
+                                   <div class="mb-3 flex items-center justify-between gap-3">
+                                        <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Document #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeDocument(this)" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">
+                                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                             </svg>
+                                        </button>
+                                   </div>
+                                   <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                        <input type="hidden" name="documents[{{ $index }}][id]" value="{{ $document->id }}">
+                                        <select name="documents[{{ $index }}][type]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                             <option value="">Select document type</option>
+                                             @foreach(\App\Enums\DocumentTypeEnum::cases() as $type)
+                                             <option value="{{ $type->value }}" @selected($document->type === $type->value)>
+                                                  {{ str_replace('_', ' ', $type->name) }}
+                                             </option>
+                                             @endforeach
+                                        </select>
+                                        <input type="file" name="documents[{{ $index }}][file]"
+                                             class="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white dark:bg-slate-900 text-sm text-slate-600 shadow-sm outline-none transition file:mr-4 file:border-0 file:bg-slate-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:file:bg-slate-800 dark:file:text-slate-200 dark:hover:file:bg-slate-700 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                                        @if($document->file)
+                                        <div class="flex items-center gap-2 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50 md:col-span-2">
+                                             <svg class="h-4 w-4 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                                                  <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                                             </svg>
+                                             <a href="{{ Storage::disk('s3')->temporaryUrl($document->file, now()->addMinute(1)) }}"
+                                                  target="_blank" class="truncate text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-300">
+                                                  {{ basename($document->file) }}
+                                             </a>
+                                             <span class="text-xs text-slate-400 dark:text-slate-500">(upload new file to replace)</span>
+                                        </div>
+                                        @endif
+                                   </div>
+                              </div>
+                              @empty
+                              <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">No documents added yet.</p>
                               @endforelse
                          </div>
                     </div>
 
-                    {{-- Terms and Conditions --}}
-                    <div class="px-6">
-                         <div class="rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/60">
-                              <div class="flex items-start gap-3">
-                                   <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.249-8.25-3.286z" />
-                                        </svg>
-                                   </div>
-
-                                   <div class="flex-1">
-                                        <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100">Certification & Agreement</h4>
-                                        <p class="mt-1 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
-                                             I hereby certify that the information provided above is true and correct to the best of my knowledge.
-                                             I understand that any false statement or misrepresentation may result in the revocation of my TESDA
-                                             accreditation or disqualification from training and assessment activities.
-                                        </p>
-
-                                        <label class="mt-4 flex items-start gap-3 cursor-pointer group">
-                                             <input type="checkbox" name="agreedToTerms" value="1"
-                                                  {{ old('agreedToTerms', $learner->agreed_to_terms) ? 'checked' : '' }}
-                                                  class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                             <span class="text-xs leading-relaxed text-gray-600 transition-colors group-hover:text-gray-800 dark:text-gray-300">
-                                                  I have read, understood, and agree to the above certification statement and
-                                                  <a href="{{ route('data.privacy') }}" class="text-blue-500 underline">data privacy</a>
-                                                  <span class="ml-0.5 text-red-500">*</span>
-                                             </span>
-                                        </label>
-
-                                        @error('agreedToTerms')
-                                        <p class="mt-2 flex items-center gap-1 text-xs text-red-600">
-                                             <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                                                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                             </svg>
-                                             {{ $message }}
-                                        </p>
-                                        @enderror
-                                   </div>
-                              </div>
-                         </div>
-                    </div>
-
-                    {{-- Footer --}}
-                    <div class="flex flex-col gap-3 border-t border-gray-100 bg-gray-50 px-6 py-5 dark:border-gray-800 dark:bg-gray-900/70 sm:flex-row sm:items-center sm:justify-between">
-                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                              Review all learner information carefully before saving changes.
-                         </p>
-
-                         <div class="flex items-center gap-3">
-                              <button type="submit"
-                                   class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
-                                   <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                   </svg>
-                                   Update Student Profile Details
-                              </button>
-                         </div>
+                    {{-- Form Actions --}}
+                    <div class="sticky bottom-0 z-20 -mx-4 -mb-4 flex flex-wrap items-center gap-3 border-t border-slate-200 bg-white dark:bg-slate-900/90 p-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 md:-mx-6 md:-mb-6 md:p-5">
+                         <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/40">
+                              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                              </svg>
+                              Update {{ auth()->user()->hasRole('Trainer') ? 'trainer' : 'learner' }} information
+                         </button>
                     </div>
                </form>
           </div>
      </div>
 
      <script>
+          // ─── Client Type conditional sections ────────────────────────────────────────
+          const restrictedTypes = ['Cooperative', 'Association'];
+
+          const allSections = {
+               uli: document.querySelector('[data-section="uli"]'),
+               basic: document.querySelector('[data-section="basic"]'),
+               school: document.querySelector('[data-section="school"]'),
+               personal: document.querySelector('[data-section="personal"]'),
+               address: document.querySelector('[data-section="address"]'),
+               contact: document.querySelector('[data-section="contact"]'),
+               education: document.querySelector('[data-section="education"]'),
+               employment: document.querySelector('[data-section="employment"]'),
+               workExp: document.querySelector('[data-section="work-exp"]'),
+               trainings: document.querySelector('[data-section="trainings"]'),
+               licensure: document.querySelector('[data-section="licensure"]'),
+               competency: document.querySelector('[data-section="competency"]'),
+               documents: document.querySelector('[data-section="documents"]'),
+               nttc: document.querySelector('[data-section="nttc"]'),
+               courseBatch: document.querySelector('[data-section="course-batch"]'),
+               association: document.querySelector('[data-section="association"]'),
+               user_association: document.querySelector('[data-section="user_association"]'),
+          };
+
+          function applyClientTypeVisibility(clientType) {
+               const isRestricted = restrictedTypes.includes(clientType);
+
+               // Sections hidden for Cooperative / Association
+               const restrictedHidden = ['uli', 'basic', 'school', 'employment', 'workExp', 'trainings', 'licensure', 'competency', 'courseBatch'];
+
+               Object.entries(allSections).forEach(([key, el]) => {
+                    if (!el) return;
+                    const hide = isRestricted && restrictedHidden.includes(key);
+
+                    // Association section: show ONLY for Cooperative/Association, hide for others
+                    const isAssociationSection = key === 'association';
+                    const finalHide = isAssociationSection ? !isRestricted : hide;
+
+                    el.classList.toggle('hidden', finalHide);
+
+                    // Disable required fields inside hidden sections so they don't block submit
+                    el.querySelectorAll('[required], [data-required]').forEach(field => {
+                         if (finalHide) {
+                              field.dataset.required = field.required ? '1' : '';
+                              field.required = false;
+                         } else if (field.dataset.required === '1') {
+                              field.required = true;
+                         }
+                    });
+               });
+          }
+
+          const clientTypeSelect = document.querySelector('[name="clientType"]');
+          if (clientTypeSelect) {
+               clientTypeSelect.addEventListener('change', function() {
+                    applyClientTypeVisibility(this.value);
+               });
+               // Run on page load to handle old() repopulation
+               applyClientTypeVisibility(clientTypeSelect.value);
+          }
+
+          // ─── Counters from server-rendered items ──────────────────────────────────
           let workExpCount = parseInt(document.getElementById('work-experiences-container').dataset.count);
           let trainingCount = parseInt(document.getElementById('trainings-container').dataset.count);
           let licensureCount = parseInt(document.getElementById('licensure-container').dataset.count);
           let competencyCount = parseInt(document.getElementById('competency-container').dataset.count);
           let documentCount = parseInt(document.getElementById('documents-container').dataset.count);
+          let nttcCount = parseInt(document.getElementById('nttc-container')?.dataset.count ?? '0');
 
-          const removeIconSvg = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-        </svg>`;
+          const removeIconSvg = `<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+</svg>`;
 
+          // ─── Shared helpers ───────────────────────────────────────────────────────
           function removeEmptyNotice(containerId) {
-               const container = document.getElementById(containerId);
-               const notice = container.querySelector('.empty-notice');
-               if (notice) notice.remove();
+               document.getElementById(containerId).querySelector('.empty-notice')?.remove();
           }
 
           function addEmptyNoticeIfEmpty(containerId, itemSelector, label) {
                const container = document.getElementById(containerId);
                if (container.querySelectorAll(itemSelector).length === 0) {
                     const p = document.createElement('p');
-                    p.className = 'py-4 text-center text-sm text-gray-500 empty-notice';
+                    p.className = 'rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-6 text-center text-sm text-slate-500 empty-notice dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400';
                     p.textContent = `No ${label.toLowerCase()} added yet.`;
                     container.appendChild(p);
                }
           }
 
-          function renumberItems(containerId, itemSelector) {
-               const container = document.getElementById(containerId);
-               container.querySelectorAll(itemSelector).forEach((el, i) => {
-                    const num = el.querySelector('.item-number');
-                    if (num) num.textContent = i + 1;
-               });
-          }
-
           function reindexInputs(containerId, itemSelector) {
-               const container = document.getElementById(containerId);
-               container.querySelectorAll(itemSelector).forEach((el, i) => {
+               document.getElementById(containerId).querySelectorAll(itemSelector).forEach((el, i) => {
                     el.querySelectorAll('[name]').forEach(input => {
                          input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
                     });
+                    const num = el.querySelector('.item-number');
+                    if (num) num.textContent = i + 1;
                });
           }
 
           function removeItem(btn, containerId, itemSelector, label) {
                if (!confirm(`Remove this ${label}?`)) return;
                btn.closest(itemSelector).remove();
-               renumberItems(containerId, itemSelector);
-               addEmptyNoticeIfEmpty(containerId, itemSelector, label);
                reindexInputs(containerId, itemSelector);
+               addEmptyNoticeIfEmpty(containerId, itemSelector, label);
           }
 
+          // ─── Picture preview ──────────────────────────────────────────────────────
           function previewPicture(input) {
                if (!input.files || !input.files[0]) return;
                const reader = new FileReader();
                reader.onload = e => {
-                    const preview = document.getElementById('picture-preview');
-                    const img = document.getElementById('picture-preview-img');
-                    const label = document.getElementById('picture-preview-label');
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    label.textContent = 'New photo selected';
-                    label.classList.remove('hidden');
-                    preview.classList.remove('hidden');
+                    document.getElementById('picture-preview-img').src = e.target.result;
+                    document.getElementById('picture-preview').classList.remove('hidden');
                };
                reader.readAsDataURL(input.files[0]);
           }
 
+          // ─── Work Experiences ─────────────────────────────────────────────────────
           function addWorkExperience() {
                removeEmptyNotice('work-experiences-container');
                const i = workExpCount++;
-               const html = `
-            <div class="work-experience-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                <div class="mb-3 flex items-center justify-between">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Work Experience #<span class="item-number">${document.querySelectorAll('.work-experience-item').length + 1}</span></h4>
-                    <button type="button" onclick="removeItem(this,'work-experiences-container','.work-experience-item','Work Experience')" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
-                </div>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" name="work_experiences[${i}][company]" placeholder="Company Name" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="work_experiences[${i}][position]" placeholder="Position" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="work_experiences[${i}][duration]" placeholder="Duration (e.g., 2020-2023)" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <textarea name="work_experiences[${i}][responsibilities]" placeholder="Responsibilities" rows="2" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm"></textarea>
-                </div>
-            </div>`;
-               document.getElementById('work-experiences-container').insertAdjacentHTML('beforeend', html);
+               const total = document.querySelectorAll('.work-experience-item').length + 1;
+               document.getElementById('work-experiences-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 work-experience-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Work Experience #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeItem(this,'work-experiences-container','.work-experience-item','Work Experience')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <input type="text" name="work_experiences[${i}][company]" placeholder="Company Name" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="work_experiences[${i}][position]" placeholder="Position" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="work_experiences[${i}][duration]" placeholder="Duration (e.g., 2020-2023)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <textarea name="work_experiences[${i}][responsibilities]" placeholder="Responsibilities" rows="2" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40"></textarea>
+          </div>
+     </div>`);
           }
 
+          // ─── Trainings ────────────────────────────────────────────────────────────
           function addTraining() {
                removeEmptyNotice('trainings-container');
                const i = trainingCount++;
-               const html = `
-            <div class="training-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                <div class="mb-3 flex items-center justify-between">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Training #<span class="item-number">${document.querySelectorAll('.training-item').length + 1}</span></h4>
-                    <button type="button" onclick="removeItem(this,'trainings-container','.training-item','Training')" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
-                </div>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" name="trainings[${i}][title]" placeholder="Training Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="trainings[${i}][provider]" placeholder="Training Provider" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="trainings[${i}][date]" placeholder="Date (e.g., January 2023)" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="trainings[${i}][hours]" placeholder="Number of Hours" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                </div>
-            </div>`;
-               document.getElementById('trainings-container').insertAdjacentHTML('beforeend', html);
+               const total = document.querySelectorAll('.training-item').length + 1;
+               document.getElementById('trainings-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 training-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Training #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeItem(this,'trainings-container','.training-item','Training')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <input type="text" name="trainings[${i}][title]" placeholder="Training Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="trainings[${i}][provider]" placeholder="Training Provider" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="trainings[${i}][date]" placeholder="Date (e.g., January 2023)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="trainings[${i}][hours]" placeholder="Number of Hours" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+          </div>
+     </div>`);
           }
 
+          // ─── Licensure ────────────────────────────────────────────────────────────
           function addLicensure() {
                removeEmptyNotice('licensure-container');
                const i = licensureCount++;
-               const html = `
-            <div class="licensure-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                <div class="mb-3 flex items-center justify-between">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Licensure #<span class="item-number">${document.querySelectorAll('.licensure-item').length + 1}</span></h4>
-                    <button type="button" onclick="removeItem(this,'licensure-container','.licensure-item','Licensure')" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
-                </div>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" name="licensure_examination[${i}][title]" placeholder="Examination Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="licensure_examination[${i}][license_number]" placeholder="License Number" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="licensure_examination[${i}][date_taken]" placeholder="Date Taken" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="licensure_examination[${i}][validity]" placeholder="Validity Period" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                </div>
-            </div>`;
-               document.getElementById('licensure-container').insertAdjacentHTML('beforeend', html);
+               const total = document.querySelectorAll('.licensure-item').length + 1;
+               document.getElementById('licensure-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 licensure-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Licensure #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeItem(this,'licensure-container','.licensure-item','Licensure')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <input type="text" name="licensure_examination[${i}][title]" placeholder="Examination Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="licensure_examination[${i}][license_number]" placeholder="License Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="licensure_examination[${i}][date_taken]" placeholder="Date Taken" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="licensure_examination[${i}][validity]" placeholder="Validity Period" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+          </div>
+     </div>`);
           }
 
+          // ─── Competency ───────────────────────────────────────────────────────────
           function addCompetency() {
                removeEmptyNotice('competency-container');
                const i = competencyCount++;
-               const html = `
-            <div class="competency-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60">
-                <div class="mb-3 flex items-center justify-between">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Assessment #<span class="item-number">${document.querySelectorAll('.competency-item').length + 1}</span></h4>
-                    <button type="button" onclick="removeItem(this,'competency-container','.competency-item','Assessment')" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
-                </div>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <input type="text" name="competency_assessment[${i}][qualification]" placeholder="Qualification Title" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="competency_assessment[${i}][certificate_number]" placeholder="Certificate Number" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="competency_assessment[${i}][date_issued]" placeholder="Date Issued" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                    <input type="text" name="competency_assessment[${i}][expiry_date]" placeholder="Expiry Date" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                </div>
-            </div>`;
-               document.getElementById('competency-container').insertAdjacentHTML('beforeend', html);
+               const total = document.querySelectorAll('.competency-item').length + 1;
+               document.getElementById('competency-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 competency-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Assessment #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeItem(this,'competency-container','.competency-item','Assessment')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <input type="text" name="competency_assessment[${i}][qualification]" placeholder="Qualification Title" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="competency_assessment[${i}][certificate_number]" placeholder="Certificate Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="competency_assessment[${i}][date_issued]" placeholder="Date Issued" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="competency_assessment[${i}][expiry_date]" placeholder="Expiry Date" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+          </div>
+     </div>`);
           }
 
+          // ─── Nttc ───────────────────────────────────────────────────────────
+          function addNttc() {
+               removeEmptyNotice('nttc-container');
+               const i = nttcCount++;
+               const total = document.querySelectorAll('.nttc-item').length + 1;
+               document.getElementById('nttc-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 nttc-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Nttc #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeItem(this,'nttc-container','.nttc-item','Nttc')" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <select name="nttc[${i}][level]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                    <option value="">Select Level</option>
+                    <option value="Level I">Level I</option>
+                    <option value="Level II">Level II</option>
+                    <option value="Level III">Level III</option>
+                    <option value="Level IV">Level IV</option>
+               </select>
+               <input type="text" name="nttc[${i}][competency]" placeholder="Competency (e.g. Cookery NC II)" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="text" name="nttc[${i}][certificate_number]" placeholder="Certificate Number" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="date" name="nttc[${i}][issued_on]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="date" name="nttc[${i}][valid_until]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+               <input type="file" name="nttc[${i}][file]" class="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white dark:bg-slate-900 text-sm text-slate-600 shadow-sm outline-none transition file:mr-4 file:border-0 file:bg-indigo-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:file:bg-indigo-950/50 dark:file:text-indigo-300 dark:hover:file:bg-indigo-900/60 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+          </div>
+     </div>`);
+          }
+
+          // ─── Documents ────────────────────────────────────────────────────────────
           const documentTypeOptions = `
-            <option value="">Select document type</option>
-            @foreach(\App\Enums\DocumentTypeEnum::cases() as $type)
-                <option value="{{ $type->value }}">{{ str_replace('_', ' ', $type->name) }}</option>
-            @endforeach
-        `;
+     <option value="">Select document type</option>
+     @foreach(\App\Enums\DocumentTypeEnum::cases() as $type)
+     <option value="{{ $type->value }}">{{ str_replace('_', ' ', $type->name) }}</option>
+     @endforeach
+`;
 
           function addDocument() {
                removeEmptyNotice('documents-container');
                const i = documentCount++;
-               const num = document.querySelectorAll('.document-item').length + 1;
-               const html = `
-            <div class="document-item rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/60" data-doc-id="">
-                <div class="mb-3 flex items-center justify-between">
-                    <h4 class="font-medium text-gray-900 dark:text-white">Document #<span class="item-number">${num}</span></h4>
-                    <button type="button" onclick="removeDocument(this)" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
-                </div>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <select name="documents[${i}][type]" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                        ${documentTypeOptions}
-                    </select>
-                    <input type="file" name="documents[${i}][file]" class="block w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm">
-                </div>
-            </div>`;
-               document.getElementById('documents-container').insertAdjacentHTML('beforeend', html);
+               const total = document.querySelectorAll('.document-item').length + 1;
+               document.getElementById('documents-container').insertAdjacentHTML('beforeend', `
+     <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 shadow-sm transition hover:border-slate-300 hover:bg-white dark:bg-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 document-item">
+          <div class="mb-3 flex items-center justify-between gap-3">
+               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200">Document #<span class="item-number">${total}</span></h4>
+               <button type="button" onclick="removeDocument(this)" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40">${removeIconSvg}</button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+               <select name="documents[${i}][type]" class="block w-full rounded-xl border border-slate-200 bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none placeholder:text-slate-400 transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+                    ${documentTypeOptions}
+               </select>
+               <input type="file" name="documents[${i}][file]"
+                    class="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white dark:bg-slate-900 text-sm text-slate-600 shadow-sm outline-none transition file:mr-4 file:border-0 file:bg-slate-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:file:bg-slate-800 dark:file:text-slate-200 dark:hover:file:bg-slate-700 dark:focus:border-indigo-400 dark:focus:ring-indigo-900/40">
+          </div>
+     </div>`);
           }
 
+          // ─── Remove document: track DB records for S3 deletion on submit ──────────
           function removeDocument(btn) {
                if (!confirm('Are you sure you want to remove this document? This will permanently delete the file and cannot be undone.')) return;
 
                const item = btn.closest('.document-item');
-               const docId = item.dataset.docId;
+               const docId = item.dataset.docId; // only present for existing DB records
 
                if (docId) {
                     const input = document.createElement('input');
@@ -827,9 +831,8 @@
                }
 
                item.remove();
-               renumberItems('documents-container', '.document-item');
-               addEmptyNoticeIfEmpty('documents-container', '.document-item', 'Documents');
                reindexInputs('documents-container', '.document-item');
+               addEmptyNoticeIfEmpty('documents-container', '.document-item', 'Documents');
           }
      </script>
 </x-layouts.app.flowbite>

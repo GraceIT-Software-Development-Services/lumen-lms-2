@@ -100,6 +100,7 @@
                         $severity = $record['severity'] ?? null;
 
                         if ($overall === 'present') $presentCount++;
+                        if ($overall === 'partial') $presentCount++;
                         if ($overall === 'absent') $absentCount++;
                         if ($isLate) $lateCount++;
 

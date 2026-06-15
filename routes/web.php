@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssociationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\PageController;
@@ -11,6 +12,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use Modules\CourseAdministration\Http\Controllers\LearnerTrainingApplicationController;
 use Modules\CourseAdministration\Http\Controllers\RegisterLearnerApplicationController;
+use Modules\CourseAdministration\Http\Controllers\TrainerApplicationController;
 use Modules\CourseAdministration\Http\Controllers\TrainingActivityController;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchController;
 use Modules\CourseAdministration\Http\Controllers\TrainingBatchScheduleItemController;
@@ -22,6 +24,7 @@ use Modules\Institution\Http\Controllers\CenterController;
 use Modules\Institution\Http\Controllers\TrainerCenterController;
 use Modules\PerformanceAdministration\Http\Controllers\EvaluationController;
 use Modules\PerformanceAdministration\Http\Controllers\StudentBatchAttendanceController;
+use Modules\PerformanceAdministration\Http\Controllers\StudentIndividualAttendanceReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -127,6 +130,8 @@ Route::middleware(['auth', 'verified', 'isActive'])->group(function () {
     // Evaluation
     Route::get('training-evaluation/{uuid}', [EvaluationController::class, 'trainingEvaluation'])->name('training_evaluation.index');
     Route::get('training-evaluation/create/{batchStudentId}', [EvaluationController::class, 'create'])->name('training_evaluation.create');
+    // Student Individual Attendance Report
+    Route::get('training-student-individual-attendance-report', [StudentIndividualAttendanceReportController::class, 'index'])->name('training_student_individual_attendance_report.index');
 
 
 
@@ -203,9 +208,26 @@ Route::middleware(['auth', 'verified', 'isActive'])->group(function () {
     Route::get('/learner-applications/registered/{uuid}/edit', [RegisterLearnerApplicationController::class, 'edit'])->name('update-registered-learner.edit');
     Route::put('/learner-applications/registered/{uuid}', [RegisterLearnerApplicationController::class, 'update'])->name('update-registered-learner.update');
 
+    // Trainer Application Controller
+    Route::get('/trainer-applications', [TrainerApplicationController::class, 'index'])->name('trainer-applications.index');
+
 
     // Statistics Route
     Route::get('/statistics/students', [StatisticController::class, 'studentStats'])->name('statistics.students');
+
+
+
+    // Association Routes
+    Route::get('associations', [AssociationController::class, 'index'])->name('associations.index');
+    Route::get('associations/create', [AssociationController::class, 'create'])->name('associations.create');
+    Route::post('associations', [AssociationController::class, 'store'])->name('associations.store');
+    Route::get('associations/{uuid}', [AssociationController::class, 'show'])->name('associations.show');
+    Route::get('associations/{uuid}/edit', [AssociationController::class, 'edit'])->name('associations.edit');
+    Route::put('associations/{uuid}', [AssociationController::class, 'update'])->name('associations.update');
+    Route::delete('associations/{uuid}', [AssociationController::class, 'destroy'])->name('associations.destroy');
+
+
+    // Learner Association Routes
 
 
 

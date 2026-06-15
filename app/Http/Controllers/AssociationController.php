@@ -12,7 +12,8 @@ class AssociationController extends Controller
      */
     public function index()
     {
-        //
+
+        return view('associations.index');
     }
 
     /**

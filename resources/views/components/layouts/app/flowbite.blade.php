@@ -5,9 +5,9 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="min-h-screen bg-gray-100 dark:bg-zinc-800">
     @include('partials.flow-navbar')
-    <div class="p-2 sm:ml-64 h-full dark:bg-gray-900">
+    <div class="p-2 sm:ml-64 h-full bg-gray-100 dark:bg-gray-900">
         <div class="p-3 mt-16 dark:bg-gray-900">
             {{ $slot }}
         </div>

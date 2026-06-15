@@ -27,6 +27,7 @@
                     @endif
 
                     <form action="{{ route('update-registered-learner.update', $learner->uuid) }}" method="POST" enctype="multipart/form-data">
+
                          @csrf
                          @method('PUT')
 
@@ -34,7 +35,7 @@
                          <div id="deleted-document-ids-container"></div>
 
                          {{-- ULI --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200 animate__pulse">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Unique Learner Identifier</h2>
                               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                    <div>
@@ -45,6 +46,49 @@
                                              class="bg-gray-50 border @error('uli') border-red-500 @else border-gray-300 @enderror text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                              placeholder="Enter unique learner identifier">
                                         @error('uli')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                                   </div>
+                              </div>
+                         </div>
+
+                         {{-- Other Information --}}
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                              <h2 class="text-lg font-semibold text-gray-900 mb-4">Other Information</h2>
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                   <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Client Type</label>
+                                        <select name="clientType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                             <option value="">Select client type</option>
+                                             <option value="Industry Worker" @selected(old('clientType', $learner->client_type) === 'Industry Worker')>Industry Worker</option>
+                                             <option value="Student" @selected(old('clientType', $learner->client_type) === 'Student')>Student</option>
+                                             <option value="Cooperative" @selected(old('clientType', $learner->client_type) === 'Cooperative')>Cooperative</option>
+                                             <option value="Association" @selected(old('clientType', $learner->client_type) === 'Association')>Association</option>
+                                             <option value="Graduate" @selected(old('clientType', $learner->client_type) === 'Graduate')>Graduate</option>
+                                        </select>
+                                        @error('clientType')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                                   </div>
+
+                                   <div class="md:col-span-3">
+                                        <label for="picture" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
+                                        <input type="file" id="picture" name="picture" accept="image/*"
+                                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                                             onchange="previewPicture(this)">
+
+                                        {{-- Current picture from S3 --}}
+                                        @if($learner->picture_path)
+                                        <div id="current-picture" class="mt-2 flex items-center gap-3">
+                                             <img src="{{ Storage::disk('s3')->temporaryUrl($learner->picture_path, now()->addMinutes(5)) }}"
+                                                  class="h-20 w-20 object-cover rounded-lg border">
+                                             <p class="text-xs text-gray-500">Current picture — upload a new one to replace</p>
+                                        </div>
+                                        @endif
+
+                                        {{-- Preview of newly selected picture --}}
+                                        <div id="picture-preview" class="mt-2 hidden">
+                                             <img id="picture-preview-img" src="" class="h-20 w-20 object-cover rounded-lg border">
+                                             <p class="text-xs text-gray-500 mt-1">New photo selected (not yet saved)</p>
+                                        </div>
+
+                                        @error('picture')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                    </div>
                               </div>
                          </div>
@@ -82,51 +126,8 @@
                               </div>
                          </div>
 
-                         {{-- Other Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
-                              <h2 class="text-lg font-semibold text-gray-900 mb-4">Other Information</h2>
-                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                   <div>
-                                        <label class="block mb-2 text-sm font-medium text-gray-900">Client Type</label>
-                                        <select name="clientType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                             <option value="">Select client type</option>
-                                             <option value="tvet_graduating_student" @selected(old('clientType', $learner->client_type) === 'tvet_graduating_student')>TVET Graduating Student</option>
-                                             <option value="tvet_graduate" @selected(old('clientType', $learner->client_type) === 'tvet_graduate')>TVET Graduate</option>
-                                             <option value="industry_worker" @selected(old('clientType', $learner->client_type) === 'industry_worker')>Industry Worker</option>
-                                             <option value="k12" @selected(old('clientType', $learner->client_type) === 'k12')>K12</option>
-                                             <option value="owf" @selected(old('clientType', $learner->client_type) === 'owf')>OWF</option>
-                                        </select>
-                                        @error('clientType')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                                   </div>
-
-                                   <div class="md:col-span-3">
-                                        <label for="picture" class="block mb-2 text-sm font-medium text-gray-900">Profile Picture</label>
-                                        <input type="file" id="picture" name="picture" accept="image/*"
-                                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                                             onchange="previewPicture(this)">
-
-                                        {{-- Current picture from S3 --}}
-                                        @if($learner->picture_path)
-                                        <div id="current-picture" class="mt-2 flex items-center gap-3">
-                                             <img src="{{ Storage::disk('s3')->temporaryUrl($learner->picture_path, now()->addMinutes(5)) }}"
-                                                  class="h-20 w-20 object-cover rounded-lg border">
-                                             <p class="text-xs text-gray-500">Current picture — upload a new one to replace</p>
-                                        </div>
-                                        @endif
-
-                                        {{-- Preview of newly selected picture --}}
-                                        <div id="picture-preview" class="mt-2 hidden">
-                                             <img id="picture-preview-img" src="" class="h-20 w-20 object-cover rounded-lg border">
-                                             <p class="text-xs text-gray-500 mt-1">New photo selected (not yet saved)</p>
-                                        </div>
-
-                                        @error('picture')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                                   </div>
-                              </div>
-                         </div>
-
                          {{-- School Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="school">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">School Information</h2>
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                    <div>
@@ -147,7 +148,7 @@
                          </div>
 
                          {{-- Personal Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" date-section="personal">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h2>
                               <p class="text-xs text-gray-500 mb-4">
                                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -204,7 +205,7 @@
                          </div>
 
                          {{-- Address Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="address">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Address Information</h2>
                               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                    <div class="md:col-span-3">
@@ -223,7 +224,7 @@
                          </div>
 
                          {{-- Contact Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="contact">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                    <div>
@@ -252,7 +253,7 @@
                          </div>
 
                          {{-- Educational Background --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="education">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Educational Background</h2>
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                    <div>
@@ -278,7 +279,7 @@
                          </div>
 
                          {{-- Employment Information --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="employment">
                               <h2 class="text-lg font-semibold text-gray-900 mb-4">Employment Information</h2>
                               <div>
                                    <label class="block mb-2 text-sm font-medium text-gray-900">Employment Status</label>
@@ -296,7 +297,7 @@
                          </div>
 
                          {{-- Work Experiences --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="work-exp">
                               <div class="flex items-center justify-between mb-4">
                                    <h2 class="text-lg font-semibold text-gray-900">Work Experiences</h2>
                                    <button type="button" onclick="addWorkExperience()" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Work Experience</button>
@@ -326,7 +327,7 @@
                          </div>
 
                          {{-- Trainings --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="trainings">
                               <div class="flex items-center justify-between mb-4">
                                    <h2 class="text-lg font-semibold text-gray-900">Training/Seminars Attended</h2>
                                    <button type="button" onclick="addTraining()" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Training</button>
@@ -356,7 +357,7 @@
                          </div>
 
                          {{-- Licensure Examinations --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="licensure">
                               <div class="flex items-center justify-between mb-4">
                                    <h2 class="text-lg font-semibold text-gray-900">Licensure Examinations</h2>
                                    <button type="button" onclick="addLicensure()" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Licensure</button>
@@ -386,7 +387,7 @@
                          </div>
 
                          {{-- Competency Assessments --}}
-                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200" data-section="competency">
                               <div class="flex items-center justify-between mb-4">
                                    <h2 class="text-lg font-semibold text-gray-900">Competency Assessments</h2>
                                    <button type="button" onclick="addCompetency()" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Assessment</button>
@@ -407,6 +408,55 @@
                                              <input type="text" name="competency_assessment[{{ $index }}][certificate_number]" value="{{ $competency['certificate_number'] ?? '' }}" placeholder="Certificate Number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                              <input type="text" name="competency_assessment[{{ $index }}][date_issued]" value="{{ $competency['date_issued'] ?? '' }}" placeholder="Date Issued" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                              <input type="text" name="competency_assessment[{{ $index }}][expiry_date]" value="{{ $competency['expiry_date'] ?? '' }}" placeholder="Expiry Date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                        </div>
+                                   </div>
+                                   @empty
+                                   <p class="text-sm text-gray-500 text-center py-4 empty-notice">No competency assessments added yet.</p>
+                                   @endforelse
+                              </div>
+                         </div>
+
+                         {{-- Nttc --}}
+                         <div class="p-4 md:p-5 space-y-4 border-b border-gray-200">
+                              <div class="flex items-center justify-between mb-4">
+                                   <h2 class="text-lg font-semibold text-gray-900">Nttc</h2>
+                                   <button type="button" onclick="addNttc()" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2">+ Add Nttc</button>
+                              </div>
+                              <div id="nttc-container" data-count="{{ count($nttc) }}" class="space-y-3">
+                                   @forelse($nttc as $index => $nttcItem)
+                                   <div class="p-4 border border-gray-300 rounded-lg bg-gray-50 nttc-item">
+                                        <div class="flex justify-between items-center mb-3">
+                                             <h4 class="font-medium text-gray-900">Nttc #<span class="item-number">{{ $index + 1 }}</span></h4>
+                                             <button type="button" onclick="removeItem(this,'nttc-container','.nttc-item','Nttc')" class="text-red-600 hover:text-red-800">
+                                                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                       <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                  </svg>
+                                             </button>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                             <select name="nttc[{{ $index }}][level]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                                  <option value="">Select Level</option>
+                                                  <option value="Level I" {{ ($nttcItem['level'] ?? '') === 'Level I' ? 'selected' : '' }}>Level I</option>
+                                                  <option value="Level II" {{ ($nttcItem['level'] ?? '') === 'Level II' ? 'selected' : '' }}>Level II</option>
+                                                  <option value="Level III" {{ ($nttcItem['level'] ?? '') === 'Level III' ? 'selected' : '' }}>Level III</option>
+                                                  <option value="Level IV" {{ ($nttcItem['level'] ?? '') === 'Level IV' ? 'selected' : '' }}>Level IV</option>
+                                             </select>
+                                             <input type="text" name="nttc[{{ $index }}][competency]" value="{{ $nttcItem['competency'] ?? '' }}" placeholder="Competency (e.g. Cookery NC II)" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                             <input type="text" name="nttc[{{ $index }}][certificate_number]" value="{{ $nttcItem['certificate_number'] ?? '' }}" placeholder="Certificate Number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                             <input type="date" name="nttc[{{ $index }}][issued_on]" value="{{ $nttcItem['issued_on'] ?? '' }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                             <input type="date" name="nttc[{{ $index }}][valid_until]" value="{{ $nttcItem['valid_until'] ?? '' }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                             <input type="file" name="nttc[{{ $index }}][file]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+
+                                             @if(!empty($nttcItem['file_path']))
+                                             <div class="md:col-span-2 flex items-center gap-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg p-2.5">
+                                                  <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                  </svg>
+                                                  <a href="{{ Storage::disk('s3')->temporaryUrl($nttcItem['file_path'], now()->addMinutes(10)) }}" target="_blank" class="text-blue-600 hover:underline truncate flex-1">
+                                                       {{ basename($nttcItem['file_path']) }}
+                                                  </a>
+                                             </div>
+                                             @endif
                                         </div>
                                    </div>
                                    @empty
@@ -486,12 +536,68 @@
      </div>
 
      <script>
+          // ─── Client Type conditional sections ────────────────────────────────────────
+          const restrictedTypes = ['Cooperative', 'Association'];
+
+          const allSections = {
+               uli: document.querySelector('[data-section="uli"]'),
+               basic: document.querySelector('[data-section="basic"]'),
+               school: document.querySelector('[data-section="school"]'),
+               personal: document.querySelector('[data-section="personal"]'),
+               address: document.querySelector('[data-section="address"]'),
+               contact: document.querySelector('[data-section="contact"]'),
+               education: document.querySelector('[data-section="education"]'),
+               employment: document.querySelector('[data-section="employment"]'),
+               workExp: document.querySelector('[data-section="work-exp"]'),
+               trainings: document.querySelector('[data-section="trainings"]'),
+               licensure: document.querySelector('[data-section="licensure"]'),
+               competency: document.querySelector('[data-section="competency"]'),
+               documents: document.querySelector('[data-section="documents"]'),
+               courseBatch: document.querySelector('[data-section="course-batch"]'),
+               association: document.querySelector('[data-section="association"]'),
+          };
+
+          function applyClientTypeVisibility(clientType) {
+               const isRestricted = restrictedTypes.includes(clientType);
+
+               // Sections hidden for Cooperative / Association
+               const restrictedHidden = ['uli', 'basic', 'school', 'employment', 'workExp', 'trainings', 'licensure', 'competency', 'documents', 'courseBatch'];
+
+               Object.entries(allSections).forEach(([key, el]) => {
+                    if (!el) return;
+                    const hide = isRestricted && restrictedHidden.includes(key);
+
+                    // Association section: show ONLY for Cooperative/Association, hide for others
+                    const isAssociationSection = key === 'association';
+                    const finalHide = isAssociationSection ? !isRestricted : hide;
+
+                    el.classList.toggle('hidden', finalHide);
+
+                    // Disable required fields inside hidden sections so they don't block submit
+                    el.querySelectorAll('[required], [data-required]').forEach(field => {
+                         if (finalHide) {
+                              field.dataset.required = field.required ? '1' : '';
+                              field.required = false;
+                         } else if (field.dataset.required === '1') {
+                              field.required = true;
+                         }
+                    });
+               });
+          }
+
+          document.querySelector('[name="clientType"]').addEventListener('change', function() {
+               applyClientTypeVisibility(this.value);
+          });
+
+          // Run on page load to handle old() repopulation
+          applyClientTypeVisibility(document.querySelector('[name="clientType"]').value);
           // ─── Counters from server-rendered items ──────────────────────────────────
           let workExpCount = parseInt(document.getElementById('work-experiences-container').dataset.count);
           let trainingCount = parseInt(document.getElementById('trainings-container').dataset.count);
           let licensureCount = parseInt(document.getElementById('licensure-container').dataset.count);
           let competencyCount = parseInt(document.getElementById('competency-container').dataset.count);
           let documentCount = parseInt(document.getElementById('documents-container').dataset.count);
+          let nttcCount = parseInt(document.getElementById('nttc-container').dataset.count);
 
           const removeIconSvg = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -616,6 +722,34 @@
                          <input type="text" name="competency_assessment[${i}][certificate_number]" placeholder="Certificate Number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                          <input type="text" name="competency_assessment[${i}][date_issued]" placeholder="Date Issued" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                          <input type="text" name="competency_assessment[${i}][expiry_date]" placeholder="Expiry Date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    </div>
+               </div>`);
+          }
+
+          // ─── Nttc ───────────────────────────────────────────────────────────
+          function addNttc() {
+               removeEmptyNotice('nttc-container');
+               const i = nttcCount++;
+               const total = document.querySelectorAll('.nttc-item').length + 1;
+               document.getElementById('nttc-container').insertAdjacentHTML('beforeend', `
+               <div class="p-4 border border-gray-300 rounded-lg bg-gray-50 nttc-item">
+                    <div class="flex justify-between items-center mb-3">
+                         <h4 class="font-medium text-gray-900">Nttc #<span class="item-number">${total}</span></h4>
+                         <button type="button" onclick="removeItem(this,'nttc-container','.nttc-item','Nttc')" class="text-red-600 hover:text-red-800">${removeIconSvg}</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                         <select name="nttc[${i}][level]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                              <option value="">Select Level</option>
+                              <option value="Level I">Level I</option>
+                              <option value="Level II">Level II</option>
+                              <option value="Level III">Level III</option>
+                              <option value="Level IV">Level IV</option>
+                         </select>
+                         <input type="text" name="nttc[${i}][competency]" placeholder="Competency (e.g. Cookery NC II)" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                         <input type="text" name="nttc[${i}][certificate_number]" placeholder="Certificate Number" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                         <input type="date" name="nttc[${i}][issued_on]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                         <input type="date" name="nttc[${i}][valid_until]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                         <input type="file" name="nttc[${i}][file]" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                     </div>
                </div>`);
           }
